@@ -8,6 +8,7 @@ type RepoManager interface {
 	PaymentRepo() repository.PaymentRepo
 	ProductRepo() repository.ProductRepo
 	OrderRepo() repository.OrderRepo
+	ReportRepo() repository.ReportRepo
 }
 
 type repoManager struct {
@@ -32,6 +33,10 @@ func (r *repoManager) ProductRepo() repository.ProductRepo {
 
 func (r *repoManager) OrderRepo() repository.OrderRepo {
 	return repository.NewOrderRepo(r.infra.SqlDb())
+}
+
+func (r *repoManager) ReportRepo() repository.ReportRepo {
+	return repository.NewReportRepo(r.infra.SqlDb())
 }
 
 func NewRepoManager(manager InfraManager) RepoManager {

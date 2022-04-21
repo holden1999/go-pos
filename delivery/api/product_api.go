@@ -29,6 +29,7 @@ func (api *ProductApi) InitRouter() {
 }
 
 func (api *ProductApi) listProduct(c *gin.Context) {
+
 	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
 	skip, _ := strconv.Atoi(c.DefaultQuery("skip", "0"))
 	categoryId, _ := strconv.Atoi(c.Query("categoryId"))

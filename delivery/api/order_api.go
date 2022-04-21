@@ -2,16 +2,19 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+	"go-pos/usecase"
 	"net/http"
 )
 
 type OrderApi struct {
-	publicRoute *gin.RouterGroup
+	publicRoute  *gin.RouterGroup
+	orderUseCase usecase.OrderUseCase
 }
 
-func NewOrderApi(publicRoute *gin.RouterGroup) {
+func NewOrderApi(publicRoute *gin.RouterGroup, orderUseCase usecase.OrderUseCase) {
 	orderApi := OrderApi{
-		publicRoute: publicRoute,
+		publicRoute:  publicRoute,
+		orderUseCase: orderUseCase,
 	}
 	orderApi.InitRouter()
 }

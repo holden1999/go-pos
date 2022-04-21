@@ -2,16 +2,19 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+	"go-pos/usecase"
 	"net/http"
 )
 
 type PaymentApi struct {
-	publicRoute *gin.RouterGroup
+	publicRoute    *gin.RouterGroup
+	paymentUseCase usecase.PaymentUseCase
 }
 
-func NewPaymentApi(publicRoute *gin.RouterGroup) {
+func NewPaymentApi(publicRoute *gin.RouterGroup, paymentUseCase usecase.PaymentUseCase) {
 	paymentApi := PaymentApi{
-		publicRoute: publicRoute,
+		publicRoute:    publicRoute,
+		paymentUseCase: paymentUseCase,
 	}
 	paymentApi.InitRouter()
 }

@@ -8,6 +8,7 @@ type UseCaseManager interface {
 	ProductUseCase() usecase.ProductUseCase
 	PaymentUseCase() usecase.PaymentUseCase
 	OrderUseCase() usecase.OrderUseCase
+	ReportUseCase() usecase.ReportUseCase
 }
 
 type useCaseManager struct {
@@ -32,6 +33,10 @@ func (u *useCaseManager) PaymentUseCase() usecase.PaymentUseCase {
 
 func (u *useCaseManager) OrderUseCase() usecase.OrderUseCase {
 	return usecase.NewOrderUseCase(u.repo.OrderRepo())
+}
+
+func (u *useCaseManager) ReportUseCase() usecase.ReportUseCase {
+	return usecase.NewReportUseCase(u.repo.ReportRepo())
 }
 
 func NewUseCaseManager(manager RepoManager) UseCaseManager {

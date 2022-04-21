@@ -1,14 +1,19 @@
 package api
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+	"go-pos/usecase"
+)
 
 type ReportApi struct {
-	publicRoute *gin.RouterGroup
+	publicRoute   *gin.RouterGroup
+	reportUseCase usecase.ReportUseCase
 }
 
-func NewReportApi(publicRoute *gin.RouterGroup) {
+func NewReportApi(publicRoute *gin.RouterGroup, reportUseCase usecase.ReportUseCase) {
 	reportApi := ReportApi{
-		publicRoute: publicRoute,
+		publicRoute:   publicRoute,
+		reportUseCase: reportUseCase,
 	}
 	reportApi.InitRouter()
 }

@@ -2,16 +2,19 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+	"go-pos/usecase"
 	"net/http"
 )
 
 type CashierApi struct {
-	publicRoute *gin.RouterGroup
+	publicRoute    *gin.RouterGroup
+	cashierUseCase usecase.CashierUseCase
 }
 
-func NewCashierApi(publicRoute *gin.RouterGroup) {
+func NewCashierApi(publicRoute *gin.RouterGroup, cashierUseCase usecase.CashierUseCase) {
 	cashierApi := CashierApi{
-		publicRoute: publicRoute,
+		publicRoute:    publicRoute,
+		cashierUseCase: cashierUseCase,
 	}
 	cashierApi.InitRouter()
 }
