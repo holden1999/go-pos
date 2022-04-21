@@ -1,0 +1,61 @@
+{
+  "success": true,
+  "message": "Success",
+  "data": {
+    "order": {
+    "orderId": 1,
+    "cashiersId": "1",
+    "paymentTypesId": 1,
+    "totalPrice": 88500,
+    "totalPaid": 270000,
+    "totalReturn": 181500,
+    "receiptId": "S1001",
+    "updatedAt": "2022-02-23T02:19:54.904Z",
+    "createdAt": "2022-02-23T02:19:54.821Z"
+    },
+    "products": [
+    {
+    "productId": 1,
+    "name": "Lifebuoy Body Foam",
+    "price": 25000,
+    "discount": null,
+    "qty": 2,
+    "totalNormalPrice": 50000,
+    "totalFinalPrice": 50000
+    },
+    {
+    "productId": 3,
+    "name": "Chitato",
+    "price": 10000,
+    "discount": {
+    "discountId": 3,
+    "qty": 3,
+    "type": "BUY_N",
+    "result": 15000,
+    "expiredAt": "2022-02-25T00:00:00.000Z",
+    "expiredAtFormat": "25 Feb 2022",
+    "stringFormat": "Buy 3 only Rp. 15.000"
+    },
+    "qty": 4,
+    "totalNormalPrice": 40000,
+    "totalFinalPrice": 25000
+    },
+    {
+    "productId": 4,
+    "name": "Pocari Sweat 500ml",
+    "price": 5000,
+    "discount": {
+    "discountId": 2,
+    "qty": 1,
+    "type": "PERCENT",
+    "result": 10,
+    "expiredAt": "2022-03-01T00:00:00.000Z",
+    "expiredAtFormat": "01 Mar 2022",
+    "stringFormat": "Discount 10% Rp. 4.500"
+    },
+    "qty": 3,
+    "totalNormalPrice": 15000,
+    "totalFinalPrice": 13500
+    }]
+  }
+}
