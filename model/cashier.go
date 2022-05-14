@@ -4,29 +4,29 @@ import "gorm.io/gorm"
 
 type Cashier struct {
 	gorm.Model
-	name     string
-	passcode string
+	Name     string
+	Passcode string
 }
 
 func (c *Cashier) getName() string {
-	return c.name
+	return c.Name
 }
 
 func (c *Cashier) getPasscode() string {
-	return c.passcode
+	return c.Passcode
 }
 
 func (c *Cashier) setName(code string) {
-	c.name = code
+	c.Name = code
 }
 
 func (c *Cashier) setPasscode(code string) {
-	c.passcode = code
+	c.Passcode = code
 }
 
 func NewCashier(name string, passcode string) Cashier {
 	return Cashier{
-		name:     name,
-		passcode: passcode,
+		Name:     name,
+		Passcode: passcode,
 	}
 }

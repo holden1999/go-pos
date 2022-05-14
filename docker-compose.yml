@@ -1,0 +1,33 @@
+version: '3.9'
+services:
+  web:
+    build: .
+    ports:
+      - "3030:3030"
+    depends_on:
+      - database
+    restart: on-failure
+    networks:
+      - go-pos
+  database:
+    image: mysql:latest
+    container_name: mysql_db
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_HOST=${DB_HOST}
+      - MYSQL_PORT=${DB_PORT}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DBNAME=${DB_DBNAME}
+    volumes:
+      - mysql:/var/lib/mysql
+    networks:
+      - go-pos
+volumes:
+  mysql:
+
+networks:
+  go-pos:
+    driver: bridge
