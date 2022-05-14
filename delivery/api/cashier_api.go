@@ -11,12 +11,13 @@ type CashierApi struct {
 	cashierUseCase usecase.CashierUseCase
 }
 
-func NewCashierApi(publicRoute *gin.RouterGroup, cashierUseCase usecase.CashierUseCase) {
+func NewCashierApi(publicRoute *gin.RouterGroup, cashierUseCase usecase.CashierUseCase) (*CashierApi, error) {
 	cashierApi := CashierApi{
 		publicRoute:    publicRoute,
 		cashierUseCase: cashierUseCase,
 	}
 	cashierApi.InitRouter()
+	return &cashierApi, nil
 }
 
 func (api CashierApi) InitRouter() {

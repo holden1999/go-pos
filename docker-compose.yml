@@ -1,0 +1,20 @@
+#version: '3.7'
+#services:
+#  app:
+#    container_name: go-pos
+#    build: .
+#    ports:
+#      - "3030:3030"
+#    restart: on-failure
+#    depends_on:
+#      - fullstack-mysql
+#    networks:
+#      - fullstack
+#
+#  fullstack-mysql:
+#    image: mysql:5.7.38
+#    container_name: full_db_mysql
+#    ports:
+#      - 3306:3306
+#    environment:
+#
