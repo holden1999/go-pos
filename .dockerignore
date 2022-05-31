@@ -2,7 +2,7 @@
 .gitignore
 node_modules
 npm-debug.log
-Dockerfile*
+app.dockerfile
 docker-compose*
 README.md
 LICENSE

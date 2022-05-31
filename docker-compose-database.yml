@@ -1,0 +1,13 @@
+database:
+  build:
+    context: .
+    dockerfile: ./docker/db.dockerfile
+  environment:
+    - MYSQL_HOST=${DB_HOST}
+    - MYSQL_PORT=${DB_PORT}
+    - MYSQL_USER=${DB_USER}
+    - MYSQL_PASSWORD=${DB_PASSWORD}
+    - MYSQL_DBNAME=${DB_DBNAME}
+  container_name: mysql-db
+  volumes:
+    - golang-docker-data:/var/lib/mysql
