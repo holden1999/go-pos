@@ -18,8 +18,10 @@ type paymentRepo struct {
 }
 
 func (p paymentRepo) ListPayment(limit, skip, subtotal int) []model.Payment {
-	result := []model.Payment{}
-	p.db.Where("subtotal = % offset = %s limit = %", subtotal, skip, limit)
+	var result []model.Payment
+	p.db.Scopes(func(db *gorm.DB) *gorm.DB {
+		return db.Where("subtotal = ?", subtotal).Offset(skip).Limit(limit)
+	})
 	return result
 }
 

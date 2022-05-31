@@ -18,8 +18,10 @@ type productRepo struct {
 }
 
 func (p productRepo) ListProduct(limit, skip, categoryId int) []model.Product {
-	result := []model.Product{}
-	p.db.Where("categoryId = % offset = %s limit = %", categoryId, skip, limit)
+	var result []model.Product
+	p.db.Scopes(func(db *gorm.DB) *gorm.DB {
+		return db.Where("category = ?", categoryId).Offset(skip).Limit(limit)
+	}).Find(&result)
 	return result
 }
 

@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"os"
 )
 
 type Config struct {
@@ -13,13 +14,13 @@ type Config struct {
 
 func NewConfig() *Config {
 	config := new(Config)
-	dbHost := "127.0.0.1" //os.Getenv("DB_HOST")
-	dbPort := "3306"      //os.Getenv("DB_PORT")
-	dbUser := "root"      //os.Getenv("DB_USER")
-	dbPassword := "root"  //os.Getenv("DB_PASSWORD")
-	dbName := "pos"       //os.Getenv("DB_DBNAME")
+	dbHost := os.Getenv("MYSQL_HOST")
+	dbPort := os.Getenv("MYSQL_PORT")
+	dbUser := os.Getenv("MYSQL_USER")
+	dbPassword := os.Getenv("MYSQL_PASSWORD")
+	dbName := os.Getenv("MYSQL_DBNAME")
 	config.RouterEngine = gin.Default()
-	config.ApiUrl = "localhost:3030"
+	config.ApiUrl = os.Getenv("API_URL")
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", dbUser, dbPassword, dbHost, dbPort, dbName)
 	config.DataSourceName = dsn
 	return config

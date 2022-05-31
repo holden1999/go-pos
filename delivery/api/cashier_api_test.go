@@ -16,11 +16,11 @@ import (
 
 var dummyCashiers = []model.Cashier{
 	{
-		Name: "Dummy Cashier 1",
-		Passcode: "passworddummy"
+		Name:     "Dummy Cashier 1",
+		Passcode: "passworddummy",
 	}, {
-		Name: "Dummy Cashier 2",
-		Passcode: "asal123"
+		Name:     "Dummy Cashier 2",
+		Passcode: "asal123",
 	},
 }
 
@@ -59,9 +59,9 @@ func (c *cashierUseCaseMock) DeleteCashier(id int) error {
 
 type CashierApiTestSuite struct {
 	suite.Suite
-	useCaseTest	*cashierUseCaseMock
-	routerTest	*gin.Engine
-	routerGroupTest	*gin.RouterGroup
+	useCaseTest     *cashierUseCaseMock
+	routerTest      *gin.Engine
+	routerGroupTest *gin.RouterGroup
 }
 
 func (suite *CashierApiTestSuite) SetupTest() {
@@ -79,11 +79,11 @@ func (suite *CashierApiTestSuite) Test_CreateCashier_Success() {
 	suite.useCaseTest.On("NewRegistration", dummyCashier).Return(&dummyCashier, nil)
 	cashierApi, _ := NewCashierApi(suite.routerGroupTest, suite.useCaseTest)
 	handler := cashierApi.CreateCashier
-	suite.routerTest.POST("",handler)
+	suite.routerTest.POST("", handler)
 
-	rr:= httptest.NewRecorder()
+	rr := httptest.NewRecorder()
 	reqBody, _ := json.Marshal(dummyCashier)
-	request, _ := http.NewRequest(http.MethodPost,"/cashiers", bytes.NewBuffer(reqBody))
+	request, _ := http.NewRequest(http.MethodPost, "/cashiers", bytes.NewBuffer(reqBody))
 	suite.routerTest.ServeHTTP(rr, request)
 	assert.Equal(suite.T(), rr.Code, http.StatusOK)
 
@@ -103,7 +103,7 @@ func (suite *CashierApiTestSuite) Test_CreateStudent_FailedBinding() {
 
 	rr := httptest.NewRecorder()
 	reqBody, _ := json.Marshal(dummyCashierWithoutName)
-	request, _ := http.NewRequest(http.MethodPost,"/cashiers", bytes.NewBuffer(reqBody))
+	request, _ := http.NewRequest(http.MethodPost, "/cashiers", bytes.NewBuffer(reqBody))
 	suite.routerTest.ServeHTTP(rr, request)
 	assert.Equal(suite.T(), rr.Code, http.StatusBadRequest)
 }

@@ -2,13 +2,75 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+	"go-pos/delivery/apprequest"
 	"go-pos/usecase"
-	"net/http"
+	"strconv"
 )
 
 type CashierApi struct {
 	publicRoute    *gin.RouterGroup
 	cashierUseCase usecase.CashierUseCase
+}
+
+func (api CashierApi) InitRouter() {
+	api.publicRoute.GET("", api.ListCashier)
+	api.publicRoute.GET("/:cashierId", api.DetailCashier)
+	api.publicRoute.POST("", api.CreateCashier)
+	api.publicRoute.PUT("/:cashierId", api.UpdateCashier)
+	api.publicRoute.DELETE("", api.DeleteCashier)
+}
+
+func (api *CashierApi) ListCashier(c *gin.Context) {
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
+	skip, _ := strconv.Atoi(c.DefaultQuery("skip", "0"))
+	result := api.cashierUseCase.ListCashier(limit, skip)
+	c.JSON(200, result)
+}
+
+func (api *CashierApi) DetailCashier(c *gin.Context) {
+	id := c.Param("cashierId")
+	data, _ := strconv.Atoi(id)
+	result := api.cashierUseCase.DetailCashier(data)
+	c.JSON(200, gin.H{
+		"cashierId": result.ID,
+		"name":      result.Name,
+	})
+}
+
+func (api *CashierApi) CreateCashier(c *gin.Context) {
+	var createCashier apprequest.Cashier
+	err := c.ShouldBindJSON(&createCashier)
+	if err != nil {
+		c.AbortWithStatusJSON(400, err.Error())
+	}
+	data, err := api.cashierUseCase.CreateCashier(createCashier)
+	if err != nil {
+		c.AbortWithStatusJSON(400, err.Error())
+	}
+	c.JSON(200, data)
+}
+
+func (api *CashierApi) UpdateCashier(c *gin.Context) {
+	id := c.Param("cashierId")
+	data, _ := strconv.Atoi(id)
+	var updateCashier apprequest.Cashier
+	err := c.ShouldBindJSON(&updateCashier)
+	if err != nil {
+		c.AbortWithStatusJSON(400, err.Error())
+	}
+	err = api.cashierUseCase.UpdateCashier(updateCashier, data)
+	if err != nil {
+		c.AbortWithStatusJSON(400, err.Error())
+	}
+}
+
+func (api *CashierApi) DeleteCashier(c *gin.Context) {
+	id := c.Param("cashierId")
+	data, _ := strconv.Atoi(id)
+	err := api.cashierUseCase.DeleteCashier(data)
+	if err != nil {
+		c.AbortWithStatusJSON(400, err.Error())
+	}
 }
 
 func NewCashierApi(publicRoute *gin.RouterGroup, cashierUseCase usecase.CashierUseCase) (*CashierApi, error) {
@@ -18,50 +80,4 @@ func NewCashierApi(publicRoute *gin.RouterGroup, cashierUseCase usecase.CashierU
 	}
 	cashierApi.InitRouter()
 	return &cashierApi, nil
-}
-
-func (api CashierApi) InitRouter() {
-	api.publicRoute.GET("", api.listCashier)
-	api.publicRoute.GET("/:cashierId", api.detailCashier)
-	api.publicRoute.POST("", api.createCashier)
-	api.publicRoute.PUT("/:cashierId", api.updateCashier)
-	api.publicRoute.DELETE("", api.deleteCashier)
-}
-
-func (api *CashierApi) listCashier(c *gin.Context) {
-	limit := c.DefaultQuery("limit", "10")
-	skip := c.DefaultQuery("skip", "0")
-	c.String(http.StatusOK, "show with %s %s", limit, skip)
-}
-
-func (api *CashierApi) detailCashier(c *gin.Context) {
-	id := c.Param("cashierId")
-	c.JSON(200, gin.H{
-		"cashierId": id,
-	})
-}
-
-func (api *CashierApi) createCashier(c *gin.Context) {
-	name := c.PostForm("name")
-	passcode := c.PostForm("passcode")
-	c.JSON(200, gin.H{
-		"name":     name,
-		"passcode": passcode,
-	})
-}
-
-func (api *CashierApi) updateCashier(c *gin.Context) {
-	id := c.Param("cashierId")
-	name := c.PostForm("name")
-	passcode := c.PostForm("passcode")
-	c.JSON(200, gin.H{
-		"id":       id,
-		"name":     name,
-		"passcode": passcode,
-	})
-}
-
-func (api *CashierApi) deleteCashier(c *gin.Context) {
-	name := c.Param("cashierId")
-	c.String(http.StatusOK, "delete %s", name)
 }

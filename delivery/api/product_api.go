@@ -12,24 +12,15 @@ type ProductApi struct {
 	productUseCase usecase.ProductUseCase
 }
 
-func NewProductApi(publicRoute *gin.RouterGroup, productUseCase usecase.ProductUseCase) {
-	productApi := ProductApi{
-		publicRoute:    publicRoute,
-		productUseCase: productUseCase,
-	}
-	productApi.InitRouter()
-}
-
 func (api *ProductApi) InitRouter() {
-	api.publicRoute.GET("", api.listProduct)
-	api.publicRoute.GET("/:productId", api.detailProduct)
-	api.publicRoute.POST("", api.createProduct)
-	api.publicRoute.PUT("/:productId", api.updateProduct)
-	api.publicRoute.DELETE("/:productId", api.deleteProduct)
+	api.publicRoute.GET("", api.ListProduct)
+	api.publicRoute.GET("/:productId", api.DetailProduct)
+	api.publicRoute.POST("", api.CreateProduct)
+	api.publicRoute.PUT("/:productId", api.UpdateProduct)
+	api.publicRoute.DELETE("/:productId", api.DeleteProduct)
 }
 
-func (api *ProductApi) listProduct(c *gin.Context) {
-
+func (api *ProductApi) ListProduct(c *gin.Context) {
 	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
 	skip, _ := strconv.Atoi(c.DefaultQuery("skip", "0"))
 	categoryId, _ := strconv.Atoi(c.Query("categoryId"))
@@ -37,14 +28,14 @@ func (api *ProductApi) listProduct(c *gin.Context) {
 	c.JSON(200, result)
 }
 
-func (api *ProductApi) detailProduct(c *gin.Context) {
+func (api *ProductApi) DetailProduct(c *gin.Context) {
 	id := c.Param("productId")
 	data, _ := strconv.Atoi(id)
 	result := api.productUseCase.DetailProduct(data)
 	c.JSON(200, result)
 }
 
-func (api *ProductApi) createProduct(c *gin.Context) {
+func (api *ProductApi) CreateProduct(c *gin.Context) {
 	var createProduct apprequest.ProductRequest
 	err := c.ShouldBindJSON(&createProduct)
 	if err != nil {
@@ -57,7 +48,7 @@ func (api *ProductApi) createProduct(c *gin.Context) {
 	c.JSON(200, data)
 }
 
-func (api *ProductApi) updateProduct(c *gin.Context) {
+func (api *ProductApi) UpdateProduct(c *gin.Context) {
 	id := c.Param("productId")
 	data, _ := strconv.Atoi(id)
 	var updateProduct apprequest.ProductRequest
@@ -71,11 +62,19 @@ func (api *ProductApi) updateProduct(c *gin.Context) {
 	}
 }
 
-func (api *ProductApi) deleteProduct(c *gin.Context) {
+func (api *ProductApi) DeleteProduct(c *gin.Context) {
 	id := c.Param("productId")
 	data, _ := strconv.Atoi(id)
 	err := api.productUseCase.DeleteProduct(data)
 	if err != nil {
 		c.AbortWithStatusJSON(400, err.Error())
 	}
+}
+
+func NewProductApi(publicRoute *gin.RouterGroup, productUseCase usecase.ProductUseCase) {
+	productApi := ProductApi{
+		publicRoute:    publicRoute,
+		productUseCase: productUseCase,
+	}
+	productApi.InitRouter()
 }

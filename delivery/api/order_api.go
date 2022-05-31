@@ -20,28 +20,28 @@ func NewOrderApi(publicRoute *gin.RouterGroup, orderUseCase usecase.OrderUseCase
 }
 
 func (api *OrderApi) InitRouter() {
-	api.publicRoute.GET("", api.listOrder)
-	api.publicRoute.GET("/:orderId", api.detailOrder)
-	api.publicRoute.POST("", api.addOrder)
-	api.publicRoute.POST("/subtotal", api.subTotalOrder)
-	api.publicRoute.GET("/:orderId/download", api.downloadOrder)
-	api.publicRoute.GET("/:orderId/check-download", api.checkDownloadOrder)
+	api.publicRoute.GET("", api.ListOrder)
+	api.publicRoute.GET("/:orderId", api.DetailOrder)
+	api.publicRoute.POST("", api.AddOrder)
+	api.publicRoute.POST("/subtotal", api.SubTotalOrder)
+	api.publicRoute.GET("/:orderId/download", api.DownloadOrder)
+	api.publicRoute.GET("/:orderId/check-download", api.CheckDownloadOrder)
 }
 
-func (api *OrderApi) listOrder(c *gin.Context) {
+func (api *OrderApi) ListOrder(c *gin.Context) {
 	limit := c.DefaultQuery("limit", "10")
 	skip := c.DefaultQuery("skip", "0")
 	c.String(http.StatusOK, "show with %s %s %s %s", limit, skip)
 }
 
-func (api *OrderApi) detailOrder(c *gin.Context) {
+func (api *OrderApi) DetailOrder(c *gin.Context) {
 	id := c.Param("orderId")
 	c.JSON(200, gin.H{
 		"orderId": id,
 	})
 }
 
-func (api *OrderApi) subTotalOrder(c *gin.Context) {
+func (api *OrderApi) SubTotalOrder(c *gin.Context) {
 	productId := c.PostForm("productId")
 	qty := c.PostForm("qty")
 	c.JSON(200, gin.H{
@@ -50,7 +50,7 @@ func (api *OrderApi) subTotalOrder(c *gin.Context) {
 	})
 }
 
-func (api *OrderApi) addOrder(c *gin.Context) {
+func (api *OrderApi) AddOrder(c *gin.Context) {
 	categoryId := c.PostForm("categoryId")
 	name := c.PostForm("name")
 	image := c.PostForm("image")
@@ -67,14 +67,14 @@ func (api *OrderApi) addOrder(c *gin.Context) {
 	})
 }
 
-func (api *OrderApi) downloadOrder(c *gin.Context) {
+func (api *OrderApi) DownloadOrder(c *gin.Context) {
 	orderId := c.Param("orderId")
 	c.JSON(200, gin.H{
 		"orderId": orderId,
 	})
 }
 
-func (api *OrderApi) checkDownloadOrder(c *gin.Context) {
+func (api *OrderApi) CheckDownloadOrder(c *gin.Context) {
 	orderId := c.Param("orderId")
 	c.JSON(200, gin.H{
 		"orderId": orderId,

@@ -6,7 +6,7 @@ import (
 )
 
 type OrderRepo interface {
-	ListOrder(limit, skip int) model.Order
+	ListOrder(limit, skip int) []model.Order
 	GetById(id int) model.Order
 	CreateOrder(order model.Order) (model.Order, error)
 	SubTotalOrder(order model.Order) model.Order
@@ -16,9 +16,11 @@ type orderRepo struct {
 	db *gorm.DB
 }
 
-func (o orderRepo) ListOrder(limit, skip int) model.Order {
-	result := model.Order{}
-	o.db.Find(&result)
+func (o orderRepo) ListOrder(limit, skip int) []model.Order {
+	var result []model.Order
+	o.db.Scopes(func(db *gorm.DB) *gorm.DB {
+		return db.Offset(skip).Limit(limit)
+	}).Find(&result)
 	return result
 }
 

@@ -18,8 +18,10 @@ type cashierRepo struct {
 }
 
 func (c cashierRepo) ListCashier(limit, skip int) []model.Cashier {
-	result := []model.Cashier{}
-	c.db.Where("offset = %s limit = %", skip, limit)
+	var result []model.Cashier
+	c.db.Scopes(func(db *gorm.DB) *gorm.DB {
+		return db.Offset(skip).Limit(limit)
+	}).Find(&result)
 	return result
 }
 

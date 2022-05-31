@@ -2,6 +2,8 @@
 # go application
 FROM golang:alpine
 
+MAINTAINER Holden Gunawan
+
 RUN apk update && apk add --no-cache git
 
 WORKDIR /app
@@ -18,6 +20,4 @@ RUN go build -o binary
 #Port to the outside world
 EXPOSE 3030
 
-# Our start command which kicks off
-# our newly created binary executable
-CMD ["/app/binary"]
+ENTRYPOINT ["/app/binary"]

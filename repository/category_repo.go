@@ -18,8 +18,10 @@ type categoryRepo struct {
 }
 
 func (c categoryRepo) ListCategory(limit, skip int) []model.Category {
-	result := []model.Category{}
-	c.db.Where("offset = %s limit = %", skip, limit)
+	var result []model.Category
+	c.db.Scopes(func(db *gorm.DB) *gorm.DB {
+		return db.Offset(skip).Limit(limit)
+	}).Find(&result)
 	return result
 }
 
