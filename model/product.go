@@ -6,13 +6,14 @@ import (
 
 type Product struct {
 	*gorm.Model
-	Sku      string
-	Name     string
-	Image    string
-	Stock    int
-	Price    int
-	discount Discount
-	category Category
+	productId uint `gorm:"primarykey"`
+	Sku       string
+	Name      string
+	Stock     int
+	Price     int
+	Image     string
+	category  Category
+	discount  Discount
 }
 
 func NewProduct(sku string, name string, image string, stock int, price int, discount Discount, category Category) Product {

@@ -1,0 +1,15 @@
+version: '1.0'
+
+services:
+  Api:
+    image: holden1999/go-pos
+    container_name: go-pos
+    build:
+      context: .
+      dockerfile:  Dockerfile
+    networks:
+      - my-network
+
+networks:
+  my-network:
+    external: true

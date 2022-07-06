@@ -8,11 +8,12 @@ import (
 )
 
 type CashierApi struct {
+	BaseApi
 	publicRoute    *gin.RouterGroup
 	cashierUseCase usecase.CashierUseCase
 }
 
-func (api CashierApi) InitRouter() {
+func (api *CashierApi) InitRouter() {
 	api.publicRoute.GET("", api.ListCashier)
 	api.publicRoute.GET("/:cashierId", api.DetailCashier)
 	api.publicRoute.POST("", api.CreateCashier)
@@ -24,17 +25,7 @@ func (api *CashierApi) ListCashier(c *gin.Context) {
 	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
 	skip, _ := strconv.Atoi(c.DefaultQuery("skip", "0"))
 	result := api.cashierUseCase.ListCashier(limit, skip)
-	c.JSON(200, result)
-}
-
-func (api *CashierApi) DetailCashier(c *gin.Context) {
-	id := c.Param("cashierId")
-	data, _ := strconv.Atoi(id)
-	result := api.cashierUseCase.DetailCashier(data)
-	c.JSON(200, gin.H{
-		"cashierId": result.ID,
-		"name":      result.Name,
-	})
+	api.Success(c, "Success", result)
 }
 
 func (api *CashierApi) CreateCashier(c *gin.Context) {
@@ -47,7 +38,17 @@ func (api *CashierApi) CreateCashier(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatusJSON(400, err.Error())
 	}
-	c.JSON(200, data)
+	api.Success(c, "Success", data)
+}
+
+func (api *CashierApi) DetailCashier(c *gin.Context) {
+	id := c.Param("cashierId")
+	data, _ := strconv.Atoi(id)
+	result := api.cashierUseCase.DetailCashier(data)
+	c.JSON(200, gin.H{
+		"cashierId": result.ID,
+		"name":      result.Name,
+	})
 }
 
 func (api *CashierApi) UpdateCashier(c *gin.Context) {
@@ -62,6 +63,7 @@ func (api *CashierApi) UpdateCashier(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatusJSON(400, err.Error())
 	}
+	api.SuccessNotif(c, "Success")
 }
 
 func (api *CashierApi) DeleteCashier(c *gin.Context) {
@@ -71,6 +73,7 @@ func (api *CashierApi) DeleteCashier(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatusJSON(400, err.Error())
 	}
+	api.SuccessNotif(c, "Success")
 }
 
 func NewCashierApi(publicRoute *gin.RouterGroup, cashierUseCase usecase.CashierUseCase) (*CashierApi, error) {

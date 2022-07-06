@@ -9,8 +9,16 @@ type JsonResponse struct {
 	c *gin.Context
 }
 
+func (j *JsonResponse) SendNotif(message ResponseMessageNoData) {
+	j.c.JSON(http.StatusOK, message)
+}
+
 func (j *JsonResponse) SendData(message ResponseMessage) {
 	j.c.JSON(http.StatusOK, message)
+}
+
+func (j *JsonResponse) SendError(errMessage ErrorMessage) {
+	j.c.JSON(http.StatusOK, errMessage)
 }
 
 func NewJsonResponse(c *gin.Context) AppHttpResponse {

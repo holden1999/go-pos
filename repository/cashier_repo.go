@@ -11,6 +11,10 @@ type CashierRepo interface {
 	CreateCashier(cashier model.Cashier) (model.Cashier, error)
 	UpdateCashier(cashier model.Cashier, id int) error
 	DeleteCashier(id int) error
+
+	GetPasscode(id int) model.CashierPasscode
+	VerifyLogin(id int, cashierLogin model.CashierPasscode) (model.CashierToken, error)
+	VerifyLogout(id int, cashierLogout model.CashierPasscode) error
 }
 
 type cashierRepo struct {
@@ -51,6 +55,24 @@ func (c cashierRepo) DeleteCashier(id int) error {
 	if err != nil {
 		return err.Error
 	}
+	return nil
+}
+
+func (c cashierRepo) GetPasscode(id int) model.CashierPasscode {
+	var data model.CashierPasscode
+	c.db.First(&data, id)
+	return data
+}
+
+func (c cashierRepo) VerifyLogin(id int, cashierLogin model.CashierPasscode) (model.CashierToken, error) {
+	var result model.CashierToken
+	c.db.First(&result, id)
+	return result, nil
+}
+
+func (c cashierRepo) VerifyLogout(id int, cashierLogout model.CashierPasscode) error {
+	//var result model.Cashier
+	//result := c.db.First(&result, id)
 	return nil
 }
 

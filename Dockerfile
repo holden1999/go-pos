@@ -18,6 +18,6 @@ RUN go mod tidy
 RUN go build -o binary
 
 #Port to the outside world
-EXPOSE 3030
+#EXPOSE 3030
 
 ENTRYPOINT ["/app/binary"]
