@@ -3,6 +3,7 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 	"go-pos/delivery/apprequest"
+	"go-pos/model"
 	"go-pos/usecase"
 	"strconv"
 )
@@ -22,10 +23,13 @@ func (api *CashierApi) InitRouter() {
 }
 
 func (api *CashierApi) ListCashier(c *gin.Context) {
-	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
-	skip, _ := strconv.Atoi(c.DefaultQuery("skip", "0"))
-	result := api.cashierUseCase.ListCashier(limit, skip)
-	api.Success(c, "Success", result)
+	var meta model.List
+	var data model.CashierData
+	meta.Limit, _ = strconv.Atoi(c.DefaultQuery("limit", "10"))
+	meta.Skip, _ = strconv.Atoi(c.DefaultQuery("skip", "0"))
+	data.Cashiers = api.cashierUseCase.ListCashier(meta.Limit, meta.Skip)
+	data.Meta = meta
+	api.Success(c, "Success", data)
 }
 
 func (api *CashierApi) CreateCashier(c *gin.Context) {
@@ -44,11 +48,11 @@ func (api *CashierApi) CreateCashier(c *gin.Context) {
 func (api *CashierApi) DetailCashier(c *gin.Context) {
 	id := c.Param("cashierId")
 	data, _ := strconv.Atoi(id)
-	result := api.cashierUseCase.DetailCashier(data)
-	c.JSON(200, gin.H{
-		"cashierId": result.ID,
-		"name":      result.Name,
-	})
+	result, err := api.cashierUseCase.DetailCashier(data)
+	if err != nil {
+		c.AbortWithStatusJSON(400, err.Error())
+	}
+	api.Success(c, "Success", result)
 }
 
 func (api *CashierApi) UpdateCashier(c *gin.Context) {

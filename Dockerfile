@@ -2,8 +2,6 @@
 # go application
 FROM golang:alpine
 
-MAINTAINER Holden Gunawan
-
 RUN apk update && apk add --no-cache git
 
 WORKDIR /app

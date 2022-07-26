@@ -14,3 +14,13 @@ type Discount struct {
 	ExpiredAtFormat string
 	StringFormat    string
 }
+
+type DiscountResp struct {
+	DiscountId      uint      `gorm:"column:id" json:"discountId"`
+	Qty             int       `json:"qty"`
+	Type            string    `json:"type"`
+	Result          int       `json:"result"`
+	ExpiredAt       time.Time `json:"expiredAt"`
+	ExpiredAtFormat string    `json:"expiredAtFormat"`
+	StringFormat    string    `json:"stringFormat"`
+}

@@ -12,6 +12,10 @@ func (b *BaseApi) Success(c *gin.Context, message string, data interface{}) {
 	commonresp.NewJsonResponse(c).SendData(commonresp.NewResponseMessage(message, data))
 }
 
+func (b *BaseApi) SuccessList(c *gin.Context, message string, data interface{}, meta interface{}) {
+	commonresp.NewJsonResponse(c).SendListData(commonresp.NewListResponseMessage(message, data, meta))
+}
+
 func (b *BaseApi) SuccessNotif(c *gin.Context, message string) {
 	commonresp.NewJsonResponse(c).SendNotif(commonresp.NewResponseMessageNoData(message))
 }

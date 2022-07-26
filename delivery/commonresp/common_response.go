@@ -4,6 +4,7 @@ import "encoding/json"
 
 type AppHttpResponse interface {
 	SendData(message ResponseMessage)
+	SendListData(message ListResponseMessage)
 	SendNotif(message ResponseMessageNoData)
 	SendError(errMessage ErrorMessage)
 }
@@ -12,6 +13,13 @@ type ResponseMessage struct {
 	Success bool        `json:"success"`
 	Message string      `json:"message"`
 	Data    interface{} `json:"data"`
+}
+
+type ListResponseMessage struct {
+	Success bool        `json:"success"`
+	Message string      `json:"message"`
+	Data    interface{} `json:"data"`
+	Meta    interface{} `json:"meta"`
 }
 
 type ResponseMessageNoData struct {
@@ -35,6 +43,12 @@ func (e ErrorMessage) ToJson() string {
 func NewResponseMessage(message string, data interface{}) ResponseMessage {
 	return ResponseMessage{
 		true, message, data,
+	}
+}
+
+func NewListResponseMessage(message string, data interface{}, meta interface{}) ListResponseMessage {
+	return ListResponseMessage{
+		true, message, data, meta,
 	}
 }
 

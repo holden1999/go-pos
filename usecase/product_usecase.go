@@ -7,9 +7,9 @@ import (
 )
 
 type ProductUseCase interface {
-	ListProduct(limit int, skip int, categoryId int) []model.Product
-	DetailProduct(id int) model.Product
-	CreateProduct(product apprequest.ProductRequest) (model.Product, error)
+	ListProduct(limit int, skip int, categoryId int) []model.ProductResp
+	DetailProduct(id int) model.ProductResp
+	CreateProduct(product apprequest.ProductRequest) (model.NewProductResp, error)
 	UpdateProduct(product apprequest.ProductRequest, id int) error
 	DeleteProduct(id int) error
 }
@@ -18,15 +18,15 @@ type productUseCase struct {
 	productRepo repository.ProductRepo
 }
 
-func (p productUseCase) ListProduct(limit, skip, categoryId int) []model.Product {
+func (p productUseCase) ListProduct(limit, skip, categoryId int) []model.ProductResp {
 	return p.productRepo.ListProduct(limit, skip, categoryId)
 }
 
-func (p *productUseCase) DetailProduct(id int) model.Product {
+func (p *productUseCase) DetailProduct(id int) model.ProductResp {
 	return p.productRepo.GetById(id)
 }
 
-func (p *productUseCase) CreateProduct(product apprequest.ProductRequest) (model.Product, error) {
+func (p *productUseCase) CreateProduct(product apprequest.ProductRequest) (model.NewProductResp, error) {
 	newProduct := model.NewProduct(product.Sku, product.Name, product.Image, product.Stock, product.Price, product.Discount, product.CategoryId)
 	return p.productRepo.CreateProduct(newProduct)
 }

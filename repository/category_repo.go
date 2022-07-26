@@ -6,8 +6,8 @@ import (
 )
 
 type CategoryRepo interface {
-	ListCategory(limit, skip int) []model.Category
-	GetById(id int) model.Category
+	ListCategory(limit, skip int) []model.CategoryResp
+	GetById(id int) model.CategoryResp
 	CreateCategory(category model.Category) (model.Category, error)
 	UpdateCategory(category model.Category, id int) error
 	DeleteCategory(id int) error
@@ -17,16 +17,16 @@ type categoryRepo struct {
 	db *gorm.DB
 }
 
-func (c categoryRepo) ListCategory(limit, skip int) []model.Category {
-	var result []model.Category
+func (c categoryRepo) ListCategory(limit, skip int) []model.CategoryResp {
+	var result []model.CategoryResp
 	c.db.Scopes(func(db *gorm.DB) *gorm.DB {
 		return db.Offset(skip).Limit(limit)
 	}).Find(&result)
 	return result
 }
 
-func (c categoryRepo) GetById(id int) model.Category {
-	result := model.Category{}
+func (c categoryRepo) GetById(id int) model.CategoryResp {
+	result := model.CategoryResp{}
 	c.db.First(&result, id)
 	return result
 }

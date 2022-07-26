@@ -7,8 +7,8 @@ import (
 )
 
 type CategoryUseCase interface {
-	ListCategory(limit, skip int) []model.Category
-	DetailCategory(id int) model.Category
+	ListCategory(limit, skip int) []model.CategoryResp
+	DetailCategory(id int) model.CategoryResp
 	CreateCategory(category apprequest.CategoryRequest) (model.Category, error)
 	UpdateCategory(category apprequest.CategoryRequest, id int) error
 	DeleteCategory(id int) error
@@ -18,11 +18,11 @@ type categoryUseCase struct {
 	categoryRepo repository.CategoryRepo
 }
 
-func (c categoryUseCase) ListCategory(limit, skip int) []model.Category {
+func (c categoryUseCase) ListCategory(limit, skip int) []model.CategoryResp {
 	return c.categoryRepo.ListCategory(limit, skip)
 }
 
-func (c categoryUseCase) DetailCategory(id int) model.Category {
+func (c categoryUseCase) DetailCategory(id int) model.CategoryResp {
 	return c.categoryRepo.GetById(id)
 }
 

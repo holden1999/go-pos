@@ -3,12 +3,14 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 	"go-pos/delivery/apprequest"
+	"go-pos/model"
 	"go-pos/usecase"
 
 	"strconv"
 )
 
 type CategoryApi struct {
+	BaseApi
 	publicRoute     *gin.RouterGroup
 	categoryUseCase usecase.CategoryUseCase
 }
@@ -30,17 +32,20 @@ func (api *CategoryApi) InitRouter() {
 }
 
 func (api *CategoryApi) listCategory(c *gin.Context) {
-	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
-	skip, _ := strconv.Atoi(c.DefaultQuery("skip", "0"))
-	result := api.categoryUseCase.ListCategory(limit, skip)
-	c.JSON(200, result)
+	var meta model.List
+	var data model.CategoryData
+	meta.Limit, _ = strconv.Atoi(c.DefaultQuery("limit", "10"))
+	meta.Skip, _ = strconv.Atoi(c.DefaultQuery("skip", "0"))
+	data.Category = api.categoryUseCase.ListCategory(meta.Limit, meta.Skip)
+	data.Meta = meta
+	api.Success(c, "Success", data)
 }
 
 func (api *CategoryApi) detailCategory(c *gin.Context) {
-	id := c.Param("cashierId")
+	id := c.Param("categoryId")
 	data, _ := strconv.Atoi(id)
 	result := api.categoryUseCase.DetailCategory(data)
-	c.JSON(200, result)
+	api.Success(c, "Success", result)
 }
 
 func (api *CategoryApi) createCategory(c *gin.Context) {
