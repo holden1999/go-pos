@@ -8,6 +8,13 @@ import (
 type BaseApi struct {
 }
 
+func (b *BaseApi) ParseRequestBody(c *gin.Context, body interface{}) error {
+	if err := c.ShouldBindJSON(body); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (b *BaseApi) Success(c *gin.Context, message string, data interface{}) {
 	commonresp.NewJsonResponse(c).SendData(commonresp.NewResponseMessage(message, data))
 }

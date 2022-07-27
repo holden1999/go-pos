@@ -42,7 +42,7 @@ func (api *ProductApi) DetailProduct(c *gin.Context) {
 
 func (api *ProductApi) CreateProduct(c *gin.Context) {
 	var createProduct apprequest.ProductRequest
-	c.ShouldBindJSON(&createProduct)
+	c.BindJSON(&createProduct)
 	data, err := api.productUseCase.CreateProduct(createProduct)
 	if err != nil {
 		c.AbortWithStatusJSON(400, err.Error())
@@ -54,7 +54,7 @@ func (api *ProductApi) UpdateProduct(c *gin.Context) {
 	id := c.Param("productId")
 	data, _ := strconv.Atoi(id)
 	var updateProduct apprequest.ProductRequest
-	err := c.ShouldBindJSON(&updateProduct)
+	err := c.BindJSON(&updateProduct)
 	if err != nil {
 		c.AbortWithStatusJSON(400, err.Error())
 	}

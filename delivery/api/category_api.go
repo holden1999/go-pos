@@ -56,7 +56,7 @@ func (api *CategoryApi) createCategory(c *gin.Context) {
 	}
 	data, err := api.categoryUseCase.CreateCategory(createCategory)
 	if err != nil {
-		c.AbortWithStatusJSON(400, err.Error())
+		c.AbortWithStatusJSON(401, err.Error())
 	}
 	c.JSON(200, data)
 }
@@ -73,6 +73,7 @@ func (api *CategoryApi) updateCategory(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatusJSON(400, err.Error())
 	}
+	api.SuccessNotif(c, "Success")
 }
 
 func (api *CategoryApi) deleteCategory(c *gin.Context) {
@@ -82,4 +83,5 @@ func (api *CategoryApi) deleteCategory(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatusJSON(400, err.Error())
 	}
+	api.SuccessNotif(c, "Success")
 }

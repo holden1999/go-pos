@@ -2,11 +2,13 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+	"go-pos/model"
 	"go-pos/usecase"
-	"net/http"
+	"strconv"
 )
 
 type OrderApi struct {
+	BaseApi
 	publicRoute  *gin.RouterGroup
 	orderUseCase usecase.OrderUseCase
 }
@@ -29,16 +31,20 @@ func (api *OrderApi) InitRouter() {
 }
 
 func (api *OrderApi) ListOrder(c *gin.Context) {
-	limit := c.DefaultQuery("limit", "10")
-	skip := c.DefaultQuery("skip", "0")
-	c.String(http.StatusOK, "show with %s %s %s %s", limit, skip)
+	var meta model.List
+	var data model.OrderData
+	meta.Limit, _ = strconv.Atoi(c.DefaultQuery("limit", "10"))
+	meta.Skip, _ = strconv.Atoi(c.DefaultQuery("skip", "0"))
+	data.Order = api.orderUseCase.ListOrder(meta.Limit, meta.Skip)
+	data.Meta = meta
+	api.Success(c, "Success", data)
 }
 
 func (api *OrderApi) DetailOrder(c *gin.Context) {
 	id := c.Param("orderId")
-	c.JSON(200, gin.H{
-		"orderId": id,
-	})
+	data, _ := strconv.Atoi(id)
+	result := api.orderUseCase.DetailOrder(data)
+	api.Success(c, "Success", result)
 }
 
 func (api *OrderApi) SubTotalOrder(c *gin.Context) {

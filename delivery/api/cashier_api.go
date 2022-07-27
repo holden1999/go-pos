@@ -80,11 +80,11 @@ func (api *CashierApi) DeleteCashier(c *gin.Context) {
 	api.SuccessNotif(c, "Success")
 }
 
-func NewCashierApi(publicRoute *gin.RouterGroup, cashierUseCase usecase.CashierUseCase) (*CashierApi, error) {
+func NewCashierApi(publicRoute *gin.RouterGroup, cashierUseCase usecase.CashierUseCase) *CashierApi {
 	cashierApi := CashierApi{
 		publicRoute:    publicRoute,
 		cashierUseCase: cashierUseCase,
 	}
 	cashierApi.InitRouter()
-	return &cashierApi, nil
+	return &cashierApi
 }

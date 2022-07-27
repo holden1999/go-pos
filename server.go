@@ -36,9 +36,12 @@ func (s *server) private() {
 	productApiGroup := s.config.RouterEngine.Group("/products")
 	categoryApiGroup := s.config.RouterEngine.Group("/categories")
 	paymentApiGroup := s.config.RouterEngine.Group("/payments")
+	LoginApiGroup := s.config.RouterEngine.Group("/cashiers")
 	api.NewProductApi(productApiGroup, s.useCaseManager.ProductUseCase())
 	api.NewCategoryApi(categoryApiGroup, s.useCaseManager.CategoryUseCase())
 	api.NewPaymentApi(paymentApiGroup, s.useCaseManager.PaymentUseCase())
+	api.NewLoginApi(LoginApiGroup, s.useCaseManager.LoginUseCase(), s.useCaseManager.JwtUseCase())
+
 }
 
 func (s *server) Run() {

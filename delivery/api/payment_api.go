@@ -2,11 +2,14 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+	"go-pos/delivery/apprequest"
+	"go-pos/model"
 	"go-pos/usecase"
-	"net/http"
+	"strconv"
 )
 
 type PaymentApi struct {
+	BaseApi
 	publicRoute    *gin.RouterGroup
 	paymentUseCase usecase.PaymentUseCase
 }
@@ -24,47 +27,61 @@ func (api *PaymentApi) InitRouter() {
 	api.publicRoute.GET("/:payments", api.detailPayment)
 	api.publicRoute.POST("", api.createPayment)
 	api.publicRoute.PUT("/:payments", api.updatePayment)
-	api.publicRoute.DELETE("", api.updatePayment)
+	api.publicRoute.DELETE("", api.deletePayment)
 }
 
 func (api *PaymentApi) listPayment(c *gin.Context) {
-	limit := c.DefaultQuery("limit", "10")
-	skip := c.DefaultQuery("skip", "0")
-	c.String(http.StatusOK, "show with %s %s", limit, skip)
+	var meta model.List
+	var data model.PaymentData
+	meta.Limit, _ = strconv.Atoi(c.DefaultQuery("limit", "10"))
+	meta.Skip, _ = strconv.Atoi(c.DefaultQuery("skip", "0"))
+	subtotal, _ := strconv.Atoi(c.DefaultQuery("skip", "0"))
+	data.Payment = api.paymentUseCase.ListPayment(meta.Limit, meta.Skip, subtotal)
+	data.Meta = meta
+	api.Success(c, "Success", data)
 }
 
 func (api *PaymentApi) detailPayment(c *gin.Context) {
 	id := c.Param("cashierId")
-	c.JSON(200, gin.H{
-		"categoryId": id,
-	})
+	data, _ := strconv.Atoi(id)
+	result := api.paymentUseCase.DetailPayment(data)
+	api.Success(c, "Success", result)
 }
 
 func (api *PaymentApi) createPayment(c *gin.Context) {
-	name := c.PostForm("name")
-	tipe := c.PostForm("type")
-	logo := c.PostForm("logo")
-	c.JSON(200, gin.H{
-		"name": name,
-		"type": tipe,
-		"logo": logo,
-	})
+	var createPayment apprequest.PaymentRequest
+	err := c.ShouldBindJSON(&createPayment)
+	if err != nil {
+		c.AbortWithStatusJSON(400, err.Error())
+	}
+	data, err := api.paymentUseCase.CreatePayment(createPayment)
+	if err != nil {
+		c.AbortWithStatusJSON(400, err.Error())
+	}
+	api.Success(c, "Success", data)
 }
 
 func (api *PaymentApi) updatePayment(c *gin.Context) {
-	id := c.Param("cashierId")
-	name := c.PostForm("name")
-	tipe := c.PostForm("type")
-	logo := c.PostForm("logo")
-	c.JSON(200, gin.H{
-		"id":   id,
-		"name": name,
-		"type": tipe,
-		"logo": logo,
-	})
+	id := c.Param("paymentId")
+	data, _ := strconv.Atoi(id)
+	var updatePayment apprequest.PaymentRequest
+	err := c.ShouldBindJSON(&updatePayment)
+	if err != nil {
+		c.AbortWithStatusJSON(400, err.Error())
+	}
+	err = api.paymentUseCase.UpdatePayment(updatePayment, data)
+	if err != nil {
+		c.AbortWithStatusJSON(400, err.Error())
+	}
+	api.SuccessNotif(c, "Success")
 }
 
 func (api *PaymentApi) deletePayment(c *gin.Context) {
-	name := c.Param("cashierId")
-	c.String(http.StatusOK, "delete %s", name)
+	id := c.Param("cashierId")
+	data, _ := strconv.Atoi(id)
+	err := api.paymentUseCase.DeletePayment(data)
+	if err != nil {
+		c.AbortWithStatusJSON(400, err.Error())
+	}
+	api.SuccessNotif(c, "Success")
 }

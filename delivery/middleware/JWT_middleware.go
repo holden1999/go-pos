@@ -4,15 +4,24 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
+	"go-pos/authenticator"
 	"go-pos/usecase"
 	"net/http"
 )
 
-func AuthorizeToken() gin.HandlerFunc {
+type authHeader struct {
+	AuthorizationHeader string `header:"Authorization"`
+}
+
+type AuthTokenMiddleware struct {
+	accToken authenticator.Token
+}
+
+func (a *AuthTokenMiddleware) AuthorizeToken() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		const BEARER_SCHEMA = "Bearer"
+		const BearerSchema = "Bearer"
 		authHeader := c.GetHeader("Authorization")
-		tokenString := authHeader[len(BEARER_SCHEMA):]
+		tokenString := authHeader[len(BearerSchema):]
 		token, err := usecase.NewJWTUseCase().ValidateToken(tokenString)
 		if token.Valid {
 			claims := token.Claims.(jwt.MapClaims)
@@ -22,4 +31,8 @@ func AuthorizeToken() gin.HandlerFunc {
 			c.AbortWithStatus(http.StatusUnauthorized)
 		}
 	}
+}
+
+func NewTokenValidator(accToken authenticator.Token) *AuthTokenMiddleware {
+	return &AuthTokenMiddleware{accToken: accToken}
 }

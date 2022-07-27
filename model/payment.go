@@ -2,41 +2,29 @@ package model
 
 import "gorm.io/gorm"
 
+type PaymentData struct {
+	Payment interface{} `json:"payments"`
+	Meta    List        `json:"meta"`
+}
+
+type PaymentResp struct {
+	PaymentId uint   `gorm:"column:id" json:"paymentId"`
+	Name      string `json:"name"`
+	Type      string `json:"type"`
+	Logo      string `json:"logo"`
+}
+
 type Payment struct {
-	name string
-	tipe string `db:"type"`
-	logo string
+	Name string
+	Type string
+	Logo string
 	gorm.Model
-}
-
-func (p *Payment) getName() string {
-	return p.name
-}
-
-func (p *Payment) getType() string {
-	return p.tipe
-}
-
-func (p *Payment) getLogo() string {
-	return p.logo
-}
-
-func (p *Payment) setName(code string) {
-	p.name = code
-}
-
-func (p *Payment) setType(code string) {
-	p.tipe = code
-}
-
-func (p *Payment) setLogo(code string) {
-	p.logo = code
 }
 
 func NewPayment(name string, tipe string, logo string) Payment {
 	return Payment{
-		name: name,
-		tipe: tipe,
-		logo: logo,
+		Name: name,
+		Type: tipe,
+		Logo: logo,
 	}
 }

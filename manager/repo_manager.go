@@ -3,6 +3,7 @@ package manager
 import "go-pos/repository"
 
 type RepoManager interface {
+	AuthRepo() repository.AuthenticationRepo
 	CashierRepo() repository.CashierRepo
 	CategoryRepo() repository.CategoryRepo
 	PaymentRepo() repository.PaymentRepo
@@ -13,6 +14,10 @@ type RepoManager interface {
 
 type repoManager struct {
 	infra InfraManager
+}
+
+func (r *repoManager) AuthRepo() repository.AuthenticationRepo {
+	return repository.NewAuthRepo(r.infra.SqlDb())
 }
 
 func (r *repoManager) CashierRepo() repository.CashierRepo {

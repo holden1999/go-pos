@@ -4,33 +4,45 @@ import (
 	"github.com/gin-gonic/gin"
 	"go-pos/delivery/apprequest"
 	"go-pos/usecase"
+	"strconv"
 )
 
-type LoginApi interface {
-	Login(c *gin.Context) string
-}
-
-type loginApi struct {
+type LoginApi struct {
+	BaseApi
+	publicRoute  *gin.RouterGroup
 	loginUseCase usecase.LoginUseCase
 	jwtUseCase   usecase.JWTUseCase
 }
 
-func (l *loginApi) Login(c *gin.Context) string {
-	var credential apprequest.LoginCredentials
-	err := c.ShouldBind(&credential)
-	if err != nil {
-		return "no data found"
-	}
-	isUserAuthenticated := l.loginUseCase.LoginUser(credential.Email, credential.Password)
-	if isUserAuthenticated {
-		return l.jwtUseCase.GenerateToken(credential.Email, true)
-	}
-	return ""
+func (api *LoginApi) InitRouter() {
+	api.publicRoute.POST("/:cashierId/login", api.Login)
 }
 
-func NewLoginApi(loginUseCase usecase.LoginUseCase, jwtUseCase usecase.JWTUseCase) LoginApi {
-	return &loginApi{
+func (api *LoginApi) Login(c *gin.Context) {
+	id := c.Param("cashierId")
+	intId, _ := strconv.Atoi(id)
+	cashierId := uint(intId)
+	var credential apprequest.LoginCredentials
+	err := c.BindJSON(&credential)
+	if err != nil {
+		api.Error(c, "Wrong input")
+		return
+	}
+	isUserAuthenticated := api.loginUseCase.LoginUser(cashierId, credential.Passcode)
+	if !isUserAuthenticated {
+		//c.AbortWithStatusJSON(http.StatusUnauthorized, "Passcode does not match")
+		api.Error(c, "Passcode does not match")
+		return
+	}
+	token := api.jwtUseCase.GenerateToken(id, true)
+	api.Success(c, "Success", token)
+}
+
+func NewLoginApi(publicRoute *gin.RouterGroup, loginUseCase usecase.LoginUseCase, jwtUseCase usecase.JWTUseCase) {
+	loginApi := LoginApi{
+		publicRoute:  publicRoute,
 		loginUseCase: loginUseCase,
 		jwtUseCase:   jwtUseCase,
 	}
+	loginApi.InitRouter()
 }

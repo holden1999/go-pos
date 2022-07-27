@@ -2,6 +2,11 @@ package model
 
 import "gorm.io/gorm"
 
+type OrderData struct {
+	Order interface{} `json:"orders"`
+	Meta  List        `json:"meta"`
+}
+
 type Order struct {
 	gorm.Model
 	totalPrice  int64

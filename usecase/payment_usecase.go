@@ -7,10 +7,10 @@ import (
 )
 
 type PaymentUseCase interface {
-	ListPayment(limit, skip, subtotal int) []model.Payment
+	ListPayment(limit, skip, subtotal int) []model.PaymentResp
 	DetailPayment(id int) model.Payment
-	CreatePayment(payment apprequest.Payment) (model.Payment, error)
-	UpdatePayment(payment apprequest.Payment, id int) error
+	CreatePayment(payment apprequest.PaymentRequest) (model.Payment, error)
+	UpdatePayment(payment apprequest.PaymentRequest, id int) error
 	DeletePayment(id int) error
 }
 
@@ -18,7 +18,7 @@ type paymentUseCase struct {
 	paymentRepo repository.PaymentRepo
 }
 
-func (p paymentUseCase) ListPayment(limit, skip, subtotal int) []model.Payment {
+func (p paymentUseCase) ListPayment(limit, skip, subtotal int) []model.PaymentResp {
 	return p.paymentRepo.ListPayment(limit, skip, subtotal)
 }
 
@@ -26,12 +26,12 @@ func (p paymentUseCase) DetailPayment(id int) model.Payment {
 	return p.paymentRepo.GetById(id)
 }
 
-func (p paymentUseCase) CreatePayment(payment apprequest.Payment) (model.Payment, error) {
+func (p paymentUseCase) CreatePayment(payment apprequest.PaymentRequest) (model.Payment, error) {
 	newPayment := model.NewPayment(payment.Name, payment.Type, payment.Logo)
 	return p.paymentRepo.CreatePayment(newPayment)
 }
 
-func (p paymentUseCase) UpdatePayment(payment apprequest.Payment, id int) error {
+func (p paymentUseCase) UpdatePayment(payment apprequest.PaymentRequest, id int) error {
 	newPayment := model.NewPayment(payment.Name, payment.Type, payment.Logo)
 	return p.paymentRepo.UpdatePayment(newPayment, id)
 }

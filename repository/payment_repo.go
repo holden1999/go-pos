@@ -6,7 +6,7 @@ import (
 )
 
 type PaymentRepo interface {
-	ListPayment(limit, skip, subtotal int) []model.Payment
+	ListPayment(limit, skip, subtotal int) []model.PaymentResp
 	GetById(id int) model.Payment
 	CreatePayment(payment model.Payment) (model.Payment, error)
 	UpdatePayment(payment model.Payment, id int) error
@@ -17,8 +17,8 @@ type paymentRepo struct {
 	db *gorm.DB
 }
 
-func (p paymentRepo) ListPayment(limit, skip, subtotal int) []model.Payment {
-	var result []model.Payment
+func (p paymentRepo) ListPayment(limit, skip, subtotal int) []model.PaymentResp {
+	var result []model.PaymentResp
 	p.db.Scopes(func(db *gorm.DB) *gorm.DB {
 		return db.Where("subtotal = ?", subtotal).Offset(skip).Limit(limit)
 	})
