@@ -23,11 +23,13 @@ func (api *CashierApi) InitRouter() {
 }
 
 func (api *CashierApi) ListCashier(c *gin.Context) {
-	var meta model.List
+	var meta model.Meta
 	var data model.CashierData
 	meta.Limit, _ = strconv.Atoi(c.DefaultQuery("limit", "10"))
 	meta.Skip, _ = strconv.Atoi(c.DefaultQuery("skip", "0"))
-	data.Cashiers = api.cashierUseCase.ListCashier(meta.Limit, meta.Skip)
+	result := api.cashierUseCase.ListCashier(meta.Limit, meta.Skip)
+	data.Cashiers = result
+	meta.Total = len(result)
 	data.Meta = meta
 	api.Success(c, "Success", data)
 }

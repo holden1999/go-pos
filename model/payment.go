@@ -4,7 +4,7 @@ import "gorm.io/gorm"
 
 type PaymentData struct {
 	Payment interface{} `json:"payments"`
-	Meta    List        `json:"meta"`
+	Meta    `json:"meta"`
 }
 
 type PaymentResp struct {
@@ -12,6 +12,13 @@ type PaymentResp struct {
 	Name      string `json:"name"`
 	Type      string `json:"type"`
 	Logo      string `json:"logo"`
+}
+
+type OrderPaymentResp struct {
+	PaymentTypeId uint   `gorm:"column:id" json:"paymentTypeId"`
+	Name          string `json:"name"`
+	Logo          string `json:"logo"`
+	Type          string `json:"type"`
 }
 
 type Payment struct {

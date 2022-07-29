@@ -15,26 +15,33 @@ type LoginApi struct {
 }
 
 func (api *LoginApi) InitRouter() {
-	api.publicRoute.POST("/:cashierId/login", api.Login)
+	api.publicRoute.POST("/:cashierId/login", api.VerifyLogin)
+	api.publicRoute.GET("/:cashierId/passcode", api.Passcode)
 }
 
-func (api *LoginApi) Login(c *gin.Context) {
+func (api *LoginApi) Passcode(c *gin.Context) {
+	id := c.Param("cashierId")
+	data, _ := strconv.Atoi(id)
+	result := api.loginUseCase.GetPasscode(data)
+	api.Success(c, "Success", result)
+}
+
+func (api *LoginApi) VerifyLogin(c *gin.Context) {
 	id := c.Param("cashierId")
 	intId, _ := strconv.Atoi(id)
 	cashierId := uint(intId)
 	var credential apprequest.LoginCredentials
 	err := c.BindJSON(&credential)
 	if err != nil {
-		api.Error(c, "Wrong input")
+		api.Error(c, "Passcode does not match")
 		return
 	}
 	isUserAuthenticated := api.loginUseCase.LoginUser(cashierId, credential.Passcode)
 	if !isUserAuthenticated {
-		//c.AbortWithStatusJSON(http.StatusUnauthorized, "Passcode does not match")
 		api.Error(c, "Passcode does not match")
 		return
 	}
-	token := api.jwtUseCase.GenerateToken(id, true)
+	token, _ := api.jwtUseCase.GenerateToken()
 	api.Success(c, "Success", token)
 }
 

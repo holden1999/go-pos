@@ -1,4 +1,4 @@
-package authenticator
+package usecase
 
 import (
 	"fmt"
@@ -7,32 +7,32 @@ import (
 	"time"
 )
 
-type MiddlewareToken interface {
+type JWTUseCase interface {
 	GenerateToken() (string, error)
 	ValidateToken(tokenString string) (jwt.MapClaims, error)
 }
 
-type TokenConfig struct {
+type JwtUseCase struct {
 	secretKey string
 	issue     string
 }
 
-func (t *TokenConfig) GenerateToken() (string, error) {
+func (j *JwtUseCase) GenerateToken() (string, error) {
 	claims := jwt.StandardClaims{
 		IssuedAt: time.Now().Unix(),
 		Subject:  "1",
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	ss, err := token.SignedString([]byte(t.secretKey))
+	ss, err := token.SignedString([]byte(j.secretKey))
 	return ss, err
 }
 
-func (t *TokenConfig) ValidateToken(tokenString string) (jwt.MapClaims, error) {
+func (j *JwtUseCase) ValidateToken(tokenString string) (jwt.MapClaims, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
-		return []byte(t.secretKey), nil
+		return []byte(j.secretKey), nil
 	})
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if ok && token.Valid {
@@ -41,8 +41,8 @@ func (t *TokenConfig) ValidateToken(tokenString string) (jwt.MapClaims, error) {
 	return nil, err
 }
 
-func NewTokenConfig() TokenConfig {
-	return TokenConfig{
+func NewJWTUseCase() JWTUseCase {
+	return &JwtUseCase{
 		secretKey: getSecretKey(),
 		issue:     "Holden",
 	}

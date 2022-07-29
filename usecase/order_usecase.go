@@ -7,7 +7,7 @@ import (
 )
 
 type OrderUseCase interface {
-	ListOrder(limit, skip int) []model.Order
+	ListOrder(limit, skip int) []model.OrderResp
 	DetailOrder(id int) model.Order
 	CreateOrder(order apprequest.Order) (model.Order, error)
 	SubTotalOrder(order apprequest.Order) model.Order
@@ -17,7 +17,7 @@ type orderUseCase struct {
 	orderRepo repository.OrderRepo
 }
 
-func (o orderUseCase) ListOrder(limit, skip int) []model.Order {
+func (o orderUseCase) ListOrder(limit, skip int) []model.OrderResp {
 	return o.orderRepo.ListOrder(limit, skip)
 }
 

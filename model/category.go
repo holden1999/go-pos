@@ -9,7 +9,7 @@ type Category struct {
 
 type CategoryData struct {
 	Category interface{} `json:"categories"`
-	Meta     List        `json:"meta"`
+	Meta     `json:"meta"`
 }
 
 type CategoryResp struct {

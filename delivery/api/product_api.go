@@ -2,7 +2,9 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+	"go-pos/authenticator"
 	"go-pos/delivery/apprequest"
+	"go-pos/delivery/middleware"
 	"go-pos/model"
 	"go-pos/usecase"
 	"strconv"
@@ -15,20 +17,25 @@ type ProductApi struct {
 }
 
 func (api *ProductApi) InitRouter() {
-	api.publicRoute.GET("", api.ListProduct)
-	api.publicRoute.GET("/:productId", api.DetailProduct)
 	api.publicRoute.POST("", api.CreateProduct)
 	api.publicRoute.PUT("/:productId", api.UpdateProduct)
 	api.publicRoute.DELETE("/:productId", api.DeleteProduct)
+
+	tokenService := authenticator.NewTokenConfig()
+	api.publicRoute.Use(middleware.NewTokenValidator(&tokenService).RequireToken())
+	api.publicRoute.GET("", api.ListProduct)
+	api.publicRoute.GET("/:productId", api.DetailProduct)
 }
 
 func (api *ProductApi) ListProduct(c *gin.Context) {
-	var meta model.List
+	var meta model.Meta
 	var data model.ProductData
 	meta.Limit, _ = strconv.Atoi(c.DefaultQuery("limit", "10"))
 	meta.Skip, _ = strconv.Atoi(c.DefaultQuery("skip", "0"))
 	categoryId, _ := strconv.Atoi(c.Query("categoryId"))
-	data.Products = api.productUseCase.ListProduct(meta.Limit, meta.Skip, categoryId)
+	result := api.productUseCase.ListProduct(meta.Limit, meta.Skip, categoryId)
+	data.Products = result
+	meta.Total = len(result)
 	data.Meta = meta
 	api.Success(c, "Success", data)
 }

@@ -2,7 +2,9 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+	"go-pos/authenticator"
 	"go-pos/delivery/apprequest"
+	"go-pos/delivery/middleware"
 	"go-pos/model"
 	"go-pos/usecase"
 	"strconv"
@@ -23,20 +25,25 @@ func NewPaymentApi(publicRoute *gin.RouterGroup, paymentUseCase usecase.PaymentU
 }
 
 func (api *PaymentApi) InitRouter() {
-	api.publicRoute.GET("", api.listPayment)
-	api.publicRoute.GET("/:payments", api.detailPayment)
 	api.publicRoute.POST("", api.createPayment)
 	api.publicRoute.PUT("/:payments", api.updatePayment)
 	api.publicRoute.DELETE("", api.deletePayment)
+
+	tokenService := authenticator.NewTokenConfig()
+	api.publicRoute.Use(middleware.NewTokenValidator(&tokenService).RequireToken())
+	api.publicRoute.GET("", api.listPayment)
+	api.publicRoute.GET("/:payments", api.detailPayment)
 }
 
 func (api *PaymentApi) listPayment(c *gin.Context) {
-	var meta model.List
+	var meta model.Meta
 	var data model.PaymentData
 	meta.Limit, _ = strconv.Atoi(c.DefaultQuery("limit", "10"))
 	meta.Skip, _ = strconv.Atoi(c.DefaultQuery("skip", "0"))
 	subtotal, _ := strconv.Atoi(c.DefaultQuery("skip", "0"))
-	data.Payment = api.paymentUseCase.ListPayment(meta.Limit, meta.Skip, subtotal)
+	result := api.paymentUseCase.ListPayment(meta.Limit, meta.Skip, subtotal)
+	data.Payment = result
+	meta.Total = len(result)
 	data.Meta = meta
 	api.Success(c, "Success", data)
 }

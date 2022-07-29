@@ -22,7 +22,7 @@ func (j *JsonResponse) SendData(message ResponseMessage) {
 }
 
 func (j *JsonResponse) SendError(errMessage ErrorMessage) {
-	j.c.JSON(http.StatusOK, errMessage)
+	j.c.JSON(http.StatusUnauthorized, errMessage)
 }
 
 func NewJsonResponse(c *gin.Context) AppHttpResponse {

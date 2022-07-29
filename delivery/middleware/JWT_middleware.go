@@ -1,12 +1,9 @@
 package middleware
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt"
 	"go-pos/authenticator"
-	"go-pos/usecase"
-	"net/http"
+	"strings"
 )
 
 type authHeader struct {
@@ -14,25 +11,27 @@ type authHeader struct {
 }
 
 type AuthTokenMiddleware struct {
-	accToken authenticator.Token
+	accToken authenticator.MiddlewareToken
 }
 
-func (a *AuthTokenMiddleware) AuthorizeToken() gin.HandlerFunc {
+func (a *AuthTokenMiddleware) RequireToken() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		const BearerSchema = "Bearer"
-		authHeader := c.GetHeader("Authorization")
-		tokenString := authHeader[len(BearerSchema):]
-		token, err := usecase.NewJWTUseCase().ValidateToken(tokenString)
-		if token.Valid {
-			claims := token.Claims.(jwt.MapClaims)
-			fmt.Println(claims)
-		} else {
-			fmt.Println(err)
-			c.AbortWithStatus(http.StatusUnauthorized)
+		h := authHeader{}
+		err := c.BindHeader(&h)
+		if err != nil {
+			c.AbortWithStatusJSON(401, "No token")
+			return
 		}
+		tokenString := strings.Replace(h.AuthorizationHeader, "Bearer", "", -1)
+		if tokenString == "" {
+			c.AbortWithStatusJSON(401, "No token")
+			return
+		}
+		token, _ := a.accToken.ValidateToken(tokenString)
+		c.JSON(200, token)
 	}
 }
 
-func NewTokenValidator(accToken authenticator.Token) *AuthTokenMiddleware {
+func NewTokenValidator(accToken authenticator.MiddlewareToken) *AuthTokenMiddleware {
 	return &AuthTokenMiddleware{accToken: accToken}
 }

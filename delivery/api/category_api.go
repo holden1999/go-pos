@@ -2,7 +2,9 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+	"go-pos/authenticator"
 	"go-pos/delivery/apprequest"
+	"go-pos/delivery/middleware"
 	"go-pos/model"
 	"go-pos/usecase"
 
@@ -24,19 +26,24 @@ func NewCategoryApi(publicRoute *gin.RouterGroup, categoryUseCase usecase.Catego
 }
 
 func (api *CategoryApi) InitRouter() {
-	api.publicRoute.GET("", api.listCategory)
-	api.publicRoute.GET("/:categoryId", api.detailCategory)
 	api.publicRoute.POST("", api.createCategory)
 	api.publicRoute.PUT("/:categoryId", api.updateCategory)
 	api.publicRoute.DELETE("", api.updateCategory)
+
+	tokenService := authenticator.NewTokenConfig()
+	api.publicRoute.Use(middleware.NewTokenValidator(&tokenService).RequireToken())
+	api.publicRoute.GET("", api.listCategory)
+	api.publicRoute.GET("/:categoryId", api.detailCategory)
 }
 
 func (api *CategoryApi) listCategory(c *gin.Context) {
-	var meta model.List
+	var meta model.Meta
 	var data model.CategoryData
 	meta.Limit, _ = strconv.Atoi(c.DefaultQuery("limit", "10"))
 	meta.Skip, _ = strconv.Atoi(c.DefaultQuery("skip", "0"))
-	data.Category = api.categoryUseCase.ListCategory(meta.Limit, meta.Skip)
+	result := api.categoryUseCase.ListCategory(meta.Limit, meta.Skip)
+	data.Category = result
+	meta.Total = len(result)
 	data.Meta = meta
 	api.Success(c, "Success", data)
 }

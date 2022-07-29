@@ -16,7 +16,7 @@ type infraManager struct {
 }
 
 func (i infraManager) SqlDb() *gorm.DB {
-	//err := i.db.AutoMigrate(&model.Cashier{}, &model.Category{}, &model.Discount{}, &model.Product{}, &model.Order{}, &model.Payment{})
+	//err := i.db.AutoMigrate(&model.Cashier{}, &model.Category{}, &model.Discount{}, &model.Product{}, &model.List{}, &model.Payment{})
 	//if err != nil {
 	//	return nil
 	//}

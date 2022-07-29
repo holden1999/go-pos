@@ -2,6 +2,8 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+	"go-pos/authenticator"
+	"go-pos/delivery/middleware"
 	"go-pos/model"
 	"go-pos/usecase"
 	"strconv"
@@ -23,6 +25,9 @@ func NewOrderApi(publicRoute *gin.RouterGroup, orderUseCase usecase.OrderUseCase
 
 func (api *OrderApi) InitRouter() {
 	api.publicRoute.GET("", api.ListOrder)
+
+	tokenService := authenticator.NewTokenConfig()
+	api.publicRoute.Use(middleware.NewTokenValidator(&tokenService).RequireToken())
 	api.publicRoute.GET("/:orderId", api.DetailOrder)
 	api.publicRoute.POST("", api.AddOrder)
 	api.publicRoute.POST("/subtotal", api.SubTotalOrder)
@@ -31,11 +36,13 @@ func (api *OrderApi) InitRouter() {
 }
 
 func (api *OrderApi) ListOrder(c *gin.Context) {
-	var meta model.List
+	var meta model.Meta
 	var data model.OrderData
 	meta.Limit, _ = strconv.Atoi(c.DefaultQuery("limit", "10"))
 	meta.Skip, _ = strconv.Atoi(c.DefaultQuery("skip", "0"))
-	data.Order = api.orderUseCase.ListOrder(meta.Limit, meta.Skip)
+	result := api.orderUseCase.ListOrder(meta.Limit, meta.Skip)
+	data.List = result
+	meta.Total = len(result)
 	data.Meta = meta
 	api.Success(c, "Success", data)
 }

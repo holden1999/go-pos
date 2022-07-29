@@ -2,6 +2,8 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+	"go-pos/authenticator"
+	"go-pos/delivery/middleware"
 	"go-pos/usecase"
 )
 
@@ -19,6 +21,8 @@ func NewReportApi(publicRoute *gin.RouterGroup, reportUseCase usecase.ReportUseC
 }
 
 func (api *ReportApi) InitRouter() {
+	tokenService := authenticator.NewTokenConfig()
+	api.publicRoute.Use(middleware.NewTokenValidator(&tokenService).RequireToken())
 	api.publicRoute.GET("revenues", api.revenues)
 	api.publicRoute.GET("solds", api.solds)
 }

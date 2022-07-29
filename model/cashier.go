@@ -7,7 +7,7 @@ import (
 
 type CashierData struct {
 	Cashiers interface{} `json:"cashiers"`
-	Meta     List        `json:"meta"`
+	Meta     `json:"meta"`
 }
 
 type Cashier struct {
@@ -22,19 +22,11 @@ type CashierResp struct {
 }
 
 type CreateCashierResp struct {
-	Passcode  string    `json:"passcode,omitempty"`
-	CashierId uint      `gorm:"column:id" json:"cashierId" json:"cashierId,omitempty"`
-	Name      string    `json:"name" json:"name,omitempty"`
+	Passcode  string    `json:"passcode"`
+	CashierId uint      `gorm:"column:id" json:"cashierId"`
+	Name      string    `json:"name" json:"name"`
 	UpdatedAt time.Time `json:"updatedAt"`
 	CreatedAt time.Time `json:"createdAt"`
-}
-
-type CashierPasscode struct {
-	Passcode string
-}
-
-type CashierToken struct {
-	Token string
 }
 
 func (CashierResp) TableName() string {
@@ -50,12 +42,4 @@ func NewCashier(name string, passcode string) Cashier {
 		Name:     name,
 		Passcode: passcode,
 	}
-}
-
-func NewCashierPasscode(passcode string) CashierPasscode {
-	return CashierPasscode{Passcode: passcode}
-}
-
-func NewCashierToken(token string) CashierToken {
-	return CashierToken{Token: token}
 }
