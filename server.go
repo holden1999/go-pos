@@ -20,7 +20,6 @@ type server struct {
 
 func (s *server) initHandlers() {
 	s.public()
-	//s.routerEngine.Use(middleware.AuthorizeToken())
 	s.private()
 }
 func (s *server) public() {

@@ -59,6 +59,9 @@ func (api *ProductApi) CreateProduct(c *gin.Context) {
 
 func (api *ProductApi) UpdateProduct(c *gin.Context) {
 	id := c.Param("productId")
+	if id == "" {
+		c.AbortWithStatusJSON(404, "ID doesn't exist")
+	}
 	data, _ := strconv.Atoi(id)
 	var updateProduct apprequest.ProductRequest
 	err := c.BindJSON(&updateProduct)
@@ -74,6 +77,9 @@ func (api *ProductApi) UpdateProduct(c *gin.Context) {
 
 func (api *ProductApi) DeleteProduct(c *gin.Context) {
 	id := c.Param("productId")
+	if id == "" {
+		c.AbortWithStatusJSON(404, "ID doesn't exist")
+	}
 	data, _ := strconv.Atoi(id)
 	err := api.productUseCase.DeleteProduct(data)
 	if err != nil {

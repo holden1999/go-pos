@@ -1,10 +1,16 @@
 package model
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+	"time"
+)
 
 type Category struct {
-	gorm.Model
-	Name string
+	CategoryId uint `gorm:"primarykey"`
+	Name       string
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
+	DeletedAt  gorm.DeletedAt `gorm:"index"`
 }
 
 type CategoryData struct {

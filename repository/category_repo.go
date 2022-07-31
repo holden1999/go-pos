@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"errors"
 	"go-pos/model"
 	"gorm.io/gorm"
 )
@@ -32,6 +33,9 @@ func (c categoryRepo) GetById(id int) model.CategoryResp {
 }
 
 func (c categoryRepo) CreateCategory(category model.Category) (model.Category, error) {
+	if category.Name == "" {
+		return model.Category{}, errors.New("Data incomplete")
+	}
 	c.db.Create(&category)
 	return category, nil
 }

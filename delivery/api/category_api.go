@@ -70,6 +70,9 @@ func (api *CategoryApi) createCategory(c *gin.Context) {
 
 func (api *CategoryApi) updateCategory(c *gin.Context) {
 	id := c.Param("cashierId")
+	if id == "" {
+		c.AbortWithStatusJSON(404, "ID doesn't exist")
+	}
 	data, _ := strconv.Atoi(id)
 	var updateCategory apprequest.CategoryRequest
 	err := c.ShouldBindJSON(&updateCategory)

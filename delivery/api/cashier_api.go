@@ -36,10 +36,7 @@ func (api *CashierApi) ListCashier(c *gin.Context) {
 
 func (api *CashierApi) CreateCashier(c *gin.Context) {
 	var createCashier apprequest.Cashier
-	err := c.ShouldBindJSON(&createCashier)
-	if err != nil {
-		c.AbortWithStatusJSON(400, err.Error())
-	}
+	c.BindJSON(&createCashier)
 	data, err := api.cashierUseCase.CreateCashier(createCashier)
 	if err != nil {
 		c.AbortWithStatusJSON(400, err.Error())
@@ -59,21 +56,24 @@ func (api *CashierApi) DetailCashier(c *gin.Context) {
 
 func (api *CashierApi) UpdateCashier(c *gin.Context) {
 	id := c.Param("cashierId")
+	if id == "" {
+		c.AbortWithStatusJSON(404, "ID doesn't exist")
+	}
 	data, _ := strconv.Atoi(id)
 	var updateCashier apprequest.Cashier
-	err := c.ShouldBindJSON(&updateCashier)
+	c.BindJSON(&updateCashier)
+	err := api.cashierUseCase.UpdateCashier(updateCashier, data)
 	if err != nil {
-		c.AbortWithStatusJSON(400, err.Error())
-	}
-	err = api.cashierUseCase.UpdateCashier(updateCashier, data)
-	if err != nil {
-		c.AbortWithStatusJSON(400, err.Error())
+		c.AbortWithStatusJSON(200, err.Error())
 	}
 	api.SuccessNotif(c, "Success")
 }
 
 func (api *CashierApi) DeleteCashier(c *gin.Context) {
 	id := c.Param("cashierId")
+	if id == "" {
+		c.AbortWithStatusJSON(404, "ID doesn't exist")
+	}
 	data, _ := strconv.Atoi(id)
 	err := api.cashierUseCase.DeleteCashier(data)
 	if err != nil {
