@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"log"
 	"os"
 )
 
@@ -22,9 +23,10 @@ func NewConfig() *Config {
 	config.RouterEngine = gin.Default()
 	config.ApiUrl = os.Getenv("API_URL")
 	if config.ApiUrl == "" {
-		config.ApiUrl = "localhost:3030"
+		config.ApiUrl = ":3030"
 	}
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", dbUser, dbPassword, dbHost, dbPort, dbName)
+	log.Println(dsn)
 	config.DataSourceName = dsn
 	return config
 }

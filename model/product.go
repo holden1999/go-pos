@@ -11,14 +11,17 @@ type ProductData struct {
 }
 
 type Product struct {
-	*gorm.Model
-	Sku      string
-	Name     string
-	Stock    int
-	Price    int
-	Image    string
-	category Category
-	discount Discount
+	ProductId uint `gorm:"primarykey"`
+	Sku       string
+	Name      string
+	Stock     int
+	Price     int
+	Image     string
+	category  Category
+	discount  Discount
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt gorm.DeletedAt `gorm:"index"`
 }
 
 type NewProductResp struct {

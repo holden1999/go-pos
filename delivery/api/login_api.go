@@ -33,12 +33,12 @@ func (api *LoginApi) VerifyLogin(c *gin.Context) {
 	var credential apprequest.LoginCredentials
 	err := c.BindJSON(&credential)
 	if err != nil {
-		api.Error(c, "Passcode does not match")
+		api.Error(c, "Passcode Not Match")
 		return
 	}
 	isUserAuthenticated := api.loginUseCase.LoginUser(cashierId, credential.Passcode)
 	if !isUserAuthenticated {
-		api.Error(c, "Passcode does not match")
+		api.Error(c, "Passcode Not Match")
 		return
 	}
 	token, _ := api.jwtUseCase.GenerateToken()

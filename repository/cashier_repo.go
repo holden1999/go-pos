@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"errors"
 	"go-pos/model"
 	"gorm.io/gorm"
 )
@@ -35,6 +36,9 @@ func (c cashierRepo) GetById(id int) (model.CashierResp, error) {
 }
 
 func (c cashierRepo) CreateCashier(cashier model.Cashier) (model.CreateCashierResp, error) {
+	if cashier.Name == "" || cashier.Passcode == "" {
+		return model.CreateCashierResp{}, errors.New("incomplete data")
+	}
 	var data model.CreateCashierResp
 	err := c.db.Create(&cashier)
 	c.db.Find(&data, cashier)
@@ -45,7 +49,10 @@ func (c cashierRepo) CreateCashier(cashier model.Cashier) (model.CreateCashierRe
 }
 
 func (c cashierRepo) UpdateCashier(cashier model.Cashier, id int) error {
-	c.db.First(&cashier, id)
+	err := c.db.Where("name = ?", cashier.Name).First(&cashier, id)
+	if err != nil {
+		return err.Error
+	}
 	c.db.Save(&cashier)
 	return nil
 }
