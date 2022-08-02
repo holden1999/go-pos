@@ -16,17 +16,19 @@ type authenticationRepo struct {
 
 func (a *authenticationRepo) Passcode(id int) model.PasscodeData {
 	result := model.PasscodeData{}
-	a.db.Raw("SELECT * FROM cashiers where id = ?", id).Scan(&result)
+	err := a.db.Raw("SELECT * FROM cashiers where id = ?", id).Scan(&result)
+	if err != nil {
+		return result
+	}
 	return result
 }
 
 func (a *authenticationRepo) CheckUser(id uint, passcode string) bool {
 	var result model.Cashier
-	a.db.Raw("SELECT * FROM cashiers where passcode = ? and id = ? and deleted_at is null", passcode, id).Scan(&result)
+	a.db.Raw("SELECT * FROM cashiers where id = ? and passcode = ? and deleted_at is null", id, passcode).Scan(&result)
 	if result.Passcode != passcode {
 		return false
 	}
-
 	if result.ID != id {
 		return false
 	}

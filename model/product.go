@@ -11,22 +11,22 @@ type ProductData struct {
 }
 
 type Product struct {
-	ProductId uint `gorm:"primarykey"`
-	Sku       string
-	Name      string
-	Stock     int
-	Price     int
-	Image     string
-	category  Category
-	discount  Discount
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt gorm.DeletedAt `gorm:"index"`
+	ProductId  uint           `gorm:"primaryKey" json:"productId"`
+	Sku        string         `json:"sku"`
+	Name       string         `json:"name"`
+	Stock      int            `json:"stock"`
+	Price      int            `json:"price"`
+	Image      string         `json:"image"`
+	CategoryId uint           `json:"categoryId"`
+	DiscountId uint           `json:"discountId"`
+	CreatedAt  time.Time      `json:"createdAt"`
+	UpdatedAt  time.Time      `json:"updatedAt"`
+	DeletedAt  gorm.DeletedAt `gorm:"index" json:"deletedAt"`
 }
 
 type NewProductResp struct {
-	ProductId  uint      `gorm:"primarykey" gorm:"column:id" json:"productId"`
-	CategoryId int       `gorm:"column:category" json:"categoryId"`
+	ProductId  uint      `json:"productId"`
+	CategoryId uint      `json:"categoryId"`
 	Name       string    `json:"name"`
 	Sku        string    `json:"sku"`
 	Image      string    `json:"image"`
@@ -37,14 +37,14 @@ type NewProductResp struct {
 }
 
 type ProductResp struct {
-	ProductId uint         `gorm:"column:id" json:"productId"`
-	Sku       string       `json:"sku"`
-	Name      string       `json:"name"`
-	Stock     int          `json:"stock"`
-	Price     int          `json:"price"`
-	Image     string       `json:"image"`
-	Category  CategoryResp `gorm:"embedded" json:"category"`
-	Discount  DiscountResp `gorm:"embedded" json:"discount"`
+	ProductId uint                `json:"productId"`
+	Sku       string              `json:"sku"`
+	Name      string              `json:"name"`
+	Stock     int                 `json:"stock"`
+	Price     int                 `json:"price"`
+	Image     string              `json:"image"`
+	Category  CategoryProductResp `gorm:"embedded" json:"category"`
+	Discount  DiscountResp        `gorm:"embedded" json:"discount"`
 }
 
 func (ProductResp) TableName() string {
@@ -55,14 +55,12 @@ func (NewProductResp) TableName() string {
 	return "products"
 }
 
-func NewProduct(sku string, name string, image string, stock int, price int, discount Discount, category Category) Product {
+func NewProduct(categoryId uint, name string, image string, stock int, price int) Product {
 	return Product{
-		Sku:      sku,
-		Name:     name,
-		Image:    image,
-		Stock:    stock,
-		Price:    price,
-		discount: discount,
-		category: category,
+		CategoryId: categoryId,
+		Name:       name,
+		Image:      image,
+		Stock:      stock,
+		Price:      price,
 	}
 }

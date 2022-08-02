@@ -3,7 +3,7 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 	"go-pos/authenticator"
-	"go-pos/delivery/middleware"
+	"go-pos/controller/middleware"
 	"go-pos/usecase"
 )
 

@@ -24,17 +24,17 @@ type CashierResp struct {
 type CreateCashierResp struct {
 	Passcode  string    `json:"passcode"`
 	CashierId uint      `gorm:"column:id" json:"cashierId"`
-	Name      string    `json:"name" json:"name"`
+	Name      string    `json:"name"`
 	UpdatedAt time.Time `json:"updatedAt"`
 	CreatedAt time.Time `json:"createdAt"`
 }
 
 func (CashierResp) TableName() string {
-	return "Cashiers"
+	return "cashiers"
 }
 
 func (CreateCashierResp) TableName() string {
-	return "Cashiers"
+	return "cashiers"
 }
 
 func NewCashier(name string, passcode string) Cashier {

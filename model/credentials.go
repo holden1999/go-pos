@@ -9,6 +9,10 @@ type PasscodeData struct {
 	Passcode string `json:"passcode"`
 }
 
+type LoginResp struct {
+	Token string `json:"token"`
+}
+
 func (PasscodeData) TableName() string {
 	return "cashiers"
 }

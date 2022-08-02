@@ -9,7 +9,7 @@ import (
 type CategoryRepo interface {
 	ListCategory(limit, skip int) []model.CategoryResp
 	GetById(id int) model.CategoryResp
-	CreateCategory(category model.Category) (model.Category, error)
+	CreateCategory(category model.Category) (model.CategoryResp, error)
 	UpdateCategory(category model.Category, id int) error
 	DeleteCategory(id int) error
 }
@@ -18,7 +18,7 @@ type categoryRepo struct {
 	db *gorm.DB
 }
 
-func (c categoryRepo) ListCategory(limit, skip int) []model.CategoryResp {
+func (c *categoryRepo) ListCategory(limit, skip int) []model.CategoryResp {
 	var result []model.CategoryResp
 	c.db.Scopes(func(db *gorm.DB) *gorm.DB {
 		return db.Offset(skip).Limit(limit)
@@ -26,27 +26,29 @@ func (c categoryRepo) ListCategory(limit, skip int) []model.CategoryResp {
 	return result
 }
 
-func (c categoryRepo) GetById(id int) model.CategoryResp {
+func (c *categoryRepo) GetById(id int) model.CategoryResp {
 	result := model.CategoryResp{}
 	c.db.First(&result, id)
 	return result
 }
 
-func (c categoryRepo) CreateCategory(category model.Category) (model.Category, error) {
+func (c *categoryRepo) CreateCategory(category model.Category) (model.CategoryResp, error) {
+	var result model.CategoryResp
 	if category.Name == "" {
-		return model.Category{}, errors.New("Data incomplete")
+		return model.CategoryResp{}, errors.New("data incomplete")
 	}
 	c.db.Create(&category)
-	return category, nil
+	c.db.Find(&result, category)
+	return result, nil
 }
 
-func (c categoryRepo) UpdateCategory(category model.Category, id int) error {
+func (c *categoryRepo) UpdateCategory(category model.Category, id int) error {
 	c.db.First(&category, id)
 	c.db.Save(&category)
 	return nil
 }
 
-func (c categoryRepo) DeleteCategory(id int) error {
+func (c *categoryRepo) DeleteCategory(id int) error {
 	var category model.Category
 	err := c.db.Delete(&category, id)
 	if err != nil {

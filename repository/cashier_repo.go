@@ -18,7 +18,7 @@ type cashierRepo struct {
 	db *gorm.DB
 }
 
-func (c cashierRepo) ListCashier(limit, skip int) []model.CashierResp {
+func (c *cashierRepo) ListCashier(limit, skip int) []model.CashierResp {
 	var result []model.CashierResp
 	c.db.Scopes(func(db *gorm.DB) *gorm.DB {
 		return db.Offset(skip).Limit(limit)
@@ -26,7 +26,7 @@ func (c cashierRepo) ListCashier(limit, skip int) []model.CashierResp {
 	return result
 }
 
-func (c cashierRepo) GetById(id int) (model.CashierResp, error) {
+func (c *cashierRepo) GetById(id int) (model.CashierResp, error) {
 	result := model.CashierResp{}
 	err := c.db.First(&result, id)
 	if err != nil {
@@ -35,7 +35,7 @@ func (c cashierRepo) GetById(id int) (model.CashierResp, error) {
 	return result, nil
 }
 
-func (c cashierRepo) CreateCashier(cashier model.Cashier) (model.CreateCashierResp, error) {
+func (c *cashierRepo) CreateCashier(cashier model.Cashier) (model.CreateCashierResp, error) {
 	if cashier.Name == "" || cashier.Passcode == "" {
 		return model.CreateCashierResp{}, errors.New("incomplete data")
 	}
@@ -48,7 +48,7 @@ func (c cashierRepo) CreateCashier(cashier model.Cashier) (model.CreateCashierRe
 	return data, nil
 }
 
-func (c cashierRepo) UpdateCashier(cashier model.Cashier, id int) error {
+func (c *cashierRepo) UpdateCashier(cashier model.Cashier, id int) error {
 	err := c.db.Where("name = ?", cashier.Name).First(&cashier, id)
 	if err != nil {
 		return err.Error
@@ -57,7 +57,7 @@ func (c cashierRepo) UpdateCashier(cashier model.Cashier, id int) error {
 	return nil
 }
 
-func (c cashierRepo) DeleteCashier(id int) error {
+func (c *cashierRepo) DeleteCashier(id int) error {
 	var cashier model.Cashier
 	err := c.db.Delete(&cashier, id)
 	if err != nil {

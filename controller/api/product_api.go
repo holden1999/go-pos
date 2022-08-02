@@ -3,8 +3,8 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 	"go-pos/authenticator"
-	"go-pos/delivery/apprequest"
-	"go-pos/delivery/middleware"
+	"go-pos/controller/apprequest"
+	"go-pos/controller/middleware"
 	"go-pos/model"
 	"go-pos/usecase"
 	"strconv"
@@ -52,38 +52,39 @@ func (api *ProductApi) CreateProduct(c *gin.Context) {
 	c.BindJSON(&createProduct)
 	data, err := api.productUseCase.CreateProduct(createProduct)
 	if err != nil {
-		c.AbortWithStatusJSON(400, err.Error())
+		api.Error(c, 400, "Error Create Product")
 	}
 	api.Success(c, "Success", data)
 }
 
 func (api *ProductApi) UpdateProduct(c *gin.Context) {
 	id := c.Param("productId")
-	if id == "" {
-		c.AbortWithStatusJSON(404, "ID doesn't exist")
+	if id == "productId" {
+		api.Error(c, 404, "ID doesn't match")
+		return
 	}
 	data, _ := strconv.Atoi(id)
 	var updateProduct apprequest.ProductRequest
-	err := c.BindJSON(&updateProduct)
+	c.BindJSON(&updateProduct)
+	err := api.productUseCase.UpdateProduct(updateProduct, data)
 	if err != nil {
-		c.AbortWithStatusJSON(400, err.Error())
-	}
-	err = api.productUseCase.UpdateProduct(updateProduct, data)
-	if err != nil {
-		c.AbortWithStatusJSON(400, err.Error())
+		api.Error(c, 400, "Product data doesn't match")
+		return
 	}
 	api.SuccessNotif(c, "Success")
 }
 
 func (api *ProductApi) DeleteProduct(c *gin.Context) {
 	id := c.Param("productId")
-	if id == "" {
-		c.AbortWithStatusJSON(404, "ID doesn't exist")
+	if id == "productId" {
+		api.Error(c, 404, "ID doesn't exist")
+		return
 	}
 	data, _ := strconv.Atoi(id)
 	err := api.productUseCase.DeleteProduct(data)
 	if err != nil {
-		c.AbortWithStatusJSON(400, err.Error())
+		api.Error(c, 404, "Data not found")
+		return
 	}
 	api.SuccessNotif(c, "Success")
 }

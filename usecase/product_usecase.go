@@ -1,9 +1,10 @@
 package usecase
 
 import (
-	"go-pos/delivery/apprequest"
+	"go-pos/controller/apprequest"
 	"go-pos/model"
 	"go-pos/repository"
+	"time"
 )
 
 type ProductUseCase interface {
@@ -27,12 +28,14 @@ func (p *productUseCase) DetailProduct(id int) model.ProductResp {
 }
 
 func (p *productUseCase) CreateProduct(product apprequest.ProductRequest) (model.NewProductResp, error) {
-	newProduct := model.NewProduct(product.Sku, product.Name, product.Image, product.Stock, product.Price, product.Discount, product.CategoryId)
-	return p.productRepo.CreateProduct(newProduct)
+	timeResult := time.Unix(int64(product.Discount.ExpiredAt), 0)
+	newProduct := model.NewProduct(product.CategoryId, product.Name, product.Image, product.Stock, product.Price)
+	newDiscount := model.NewDiscount(product.Discount.Qty, product.Discount.Type, product.Discount.Result, timeResult)
+	return p.productRepo.CreateProduct(newProduct, newDiscount)
 }
 
 func (p productUseCase) UpdateProduct(product apprequest.ProductRequest, id int) error {
-	newProduct := model.NewProduct(product.Sku, product.Name, product.Image, product.Stock, product.Price, product.Discount, product.CategoryId)
+	newProduct := model.NewProduct(product.CategoryId, product.Name, product.Image, product.Stock, product.Price)
 	return p.productRepo.UpdateProduct(newProduct, id)
 }
 
