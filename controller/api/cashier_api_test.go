@@ -7,7 +7,7 @@ import (
 	"github.com/go-playground/assert/v2"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
-	"go-pos/delivery/apprequest"
+	"go-pos/controller/apprequest"
 	"go-pos/model"
 	"net/http"
 	"net/http/httptest"

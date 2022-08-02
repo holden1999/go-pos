@@ -3,10 +3,11 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 	"go-pos/authenticator"
-	"go-pos/delivery/apprequest"
-	"go-pos/delivery/middleware"
+	"go-pos/controller/apprequest"
+	"go-pos/controller/middleware"
 	"go-pos/model"
 	"go-pos/usecase"
+	"log"
 
 	"strconv"
 )
@@ -17,18 +18,10 @@ type CategoryApi struct {
 	categoryUseCase usecase.CategoryUseCase
 }
 
-func NewCategoryApi(publicRoute *gin.RouterGroup, categoryUseCase usecase.CategoryUseCase) {
-	categoryApi := CategoryApi{
-		publicRoute:     publicRoute,
-		categoryUseCase: categoryUseCase,
-	}
-	categoryApi.InitRouter()
-}
-
 func (api *CategoryApi) InitRouter() {
 	api.publicRoute.POST("", api.createCategory)
 	api.publicRoute.PUT("/:categoryId", api.updateCategory)
-	api.publicRoute.DELETE("", api.updateCategory)
+	api.publicRoute.DELETE("/:categoryId", api.updateCategory)
 
 	tokenService := authenticator.NewTokenConfig()
 	api.publicRoute.Use(middleware.NewTokenValidator(&tokenService).RequireToken())
@@ -57,41 +50,51 @@ func (api *CategoryApi) detailCategory(c *gin.Context) {
 
 func (api *CategoryApi) createCategory(c *gin.Context) {
 	var createCategory apprequest.CategoryRequest
-	err := c.ShouldBindJSON(&createCategory)
-	if err != nil {
-		c.AbortWithStatusJSON(400, err.Error())
-	}
+	c.BindJSON(&createCategory)
+	log.Println(createCategory.Name)
 	data, err := api.categoryUseCase.CreateCategory(createCategory)
 	if err != nil {
-		c.AbortWithStatusJSON(401, err.Error())
+		api.Error(c, 400, "Error create category")
+		return
 	}
-	c.JSON(200, data)
+	api.Success(c, "Success", data)
 }
 
 func (api *CategoryApi) updateCategory(c *gin.Context) {
-	id := c.Param("cashierId")
-	if id == "" {
-		c.AbortWithStatusJSON(404, "ID doesn't exist")
+	id := c.Param("categoryId")
+	if id == "categoryId" {
+		api.Error(c, 404, "ID empty")
+		return
 	}
 	data, _ := strconv.Atoi(id)
 	var updateCategory apprequest.CategoryRequest
-	err := c.ShouldBindJSON(&updateCategory)
+	c.BindJSON(&updateCategory)
+	err := api.categoryUseCase.UpdateCategory(updateCategory, data)
 	if err != nil {
-		c.AbortWithStatusJSON(400, err.Error())
-	}
-	err = api.categoryUseCase.UpdateCategory(updateCategory, data)
-	if err != nil {
-		c.AbortWithStatusJSON(400, err.Error())
+		api.Error(c, 404, "Error update category")
 	}
 	api.SuccessNotif(c, "Success")
 }
 
 func (api *CategoryApi) deleteCategory(c *gin.Context) {
 	id := c.Param("categoryId")
+	if id == "categoryId" {
+		api.Error(c, 404, "ID empty")
+		return
+	}
 	data, _ := strconv.Atoi(id)
 	err := api.categoryUseCase.DeleteCategory(data)
 	if err != nil {
-		c.AbortWithStatusJSON(400, err.Error())
+		api.Error(c, 404, "Error delete category")
+		return
 	}
 	api.SuccessNotif(c, "Success")
+}
+
+func NewCategoryApi(publicRoute *gin.RouterGroup, categoryUseCase usecase.CategoryUseCase) {
+	categoryApi := CategoryApi{
+		publicRoute:     publicRoute,
+		categoryUseCase: categoryUseCase,
+	}
+	categoryApi.InitRouter()
 }

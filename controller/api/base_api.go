@@ -2,7 +2,7 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
-	"go-pos/delivery/commonresp"
+	"go-pos/controller/commonresp"
 )
 
 type BaseApi struct {
@@ -27,6 +27,6 @@ func (b *BaseApi) SuccessNotif(c *gin.Context, message string) {
 	commonresp.NewJsonResponse(c).SendNotif(commonresp.NewResponseMessageNoData(message))
 }
 
-func (b *BaseApi) Error(c *gin.Context, message string) {
-	commonresp.NewJsonResponse(c).SendError(commonresp.NewErrorMessage(message))
+func (b *BaseApi) Error(c *gin.Context, code int, message string) {
+	commonresp.NewJsonResponse(c).SendError(code, commonresp.NewErrorMessage(message))
 }

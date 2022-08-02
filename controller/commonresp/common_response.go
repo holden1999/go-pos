@@ -6,7 +6,7 @@ type AppHttpResponse interface {
 	SendData(message ResponseMessage)
 	SendListData(message ListResponseMessage)
 	SendNotif(message ResponseMessageNoData)
-	SendError(errMessage ErrorMessage)
+	SendError(code int, errMessage ErrorMessage)
 }
 
 type ResponseMessage struct {

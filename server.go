@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"go-pos/config"
-	"go-pos/delivery/api"
+	"go-pos/controller/api"
 	"go-pos/manager"
 )
 

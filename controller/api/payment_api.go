@@ -3,8 +3,8 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 	"go-pos/authenticator"
-	"go-pos/delivery/apprequest"
-	"go-pos/delivery/middleware"
+	"go-pos/controller/apprequest"
+	"go-pos/controller/middleware"
 	"go-pos/model"
 	"go-pos/usecase"
 	"strconv"
@@ -27,7 +27,7 @@ func NewPaymentApi(publicRoute *gin.RouterGroup, paymentUseCase usecase.PaymentU
 func (api *PaymentApi) InitRouter() {
 	api.publicRoute.POST("", api.createPayment)
 	api.publicRoute.PUT("/:payments", api.updatePayment)
-	api.publicRoute.DELETE("", api.deletePayment)
+	api.publicRoute.DELETE("/:payments", api.deletePayment)
 
 	tokenService := authenticator.NewTokenConfig()
 	api.publicRoute.Use(middleware.NewTokenValidator(&tokenService).RequireToken())
@@ -60,10 +60,12 @@ func (api *PaymentApi) createPayment(c *gin.Context) {
 	err := c.ShouldBindJSON(&createPayment)
 	if err != nil {
 		c.AbortWithStatusJSON(400, err.Error())
+		return
 	}
 	data, err := api.paymentUseCase.CreatePayment(createPayment)
 	if err != nil {
 		c.AbortWithStatusJSON(400, err.Error())
+		return
 	}
 	api.Success(c, "Success", data)
 }
@@ -75,20 +77,23 @@ func (api *PaymentApi) updatePayment(c *gin.Context) {
 	err := c.ShouldBindJSON(&updatePayment)
 	if err != nil {
 		c.AbortWithStatusJSON(400, err.Error())
+		return
 	}
 	err = api.paymentUseCase.UpdatePayment(updatePayment, data)
 	if err != nil {
 		c.AbortWithStatusJSON(400, err.Error())
+		return
 	}
 	api.SuccessNotif(c, "Success")
 }
 
 func (api *PaymentApi) deletePayment(c *gin.Context) {
-	id := c.Param("cashierId")
+	id := c.Param("paymentId")
 	data, _ := strconv.Atoi(id)
 	err := api.paymentUseCase.DeletePayment(data)
 	if err != nil {
 		c.AbortWithStatusJSON(400, err.Error())
+		return
 	}
 	api.SuccessNotif(c, "Success")
 }

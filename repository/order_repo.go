@@ -16,7 +16,7 @@ type orderRepo struct {
 	db *gorm.DB
 }
 
-func (o orderRepo) ListOrder(limit, skip int) []model.OrderResp {
+func (o *orderRepo) ListOrder(limit, skip int) []model.OrderResp {
 	var result []model.OrderResp
 	o.db.Scopes(func(db *gorm.DB) *gorm.DB {
 		return db.Offset(skip).Limit(limit)
@@ -24,20 +24,20 @@ func (o orderRepo) ListOrder(limit, skip int) []model.OrderResp {
 	return result
 }
 
-func (o orderRepo) GetById(id int) model.Order {
+func (o *orderRepo) GetById(id int) model.Order {
 	result := model.Order{}
 	o.db.First(&result, id)
 	return result
 }
 
-func (o orderRepo) CreateOrder(order model.Order) (model.Order, error) {
+func (o *orderRepo) CreateOrder(order model.Order) (model.Order, error) {
 	data := o.db.Create(&order)
 	if data.Error != nil {
 		return order, data.Error
 	}
 	return order, nil
 }
-func (o orderRepo) SubTotalOrder(order model.Order) model.Order {
+func (o *orderRepo) SubTotalOrder(order model.Order) model.Order {
 	o.db.Create(&order)
 	return order
 }

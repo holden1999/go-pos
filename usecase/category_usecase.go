@@ -1,7 +1,7 @@
 package usecase
 
 import (
-	"go-pos/delivery/apprequest"
+	"go-pos/controller/apprequest"
 	"go-pos/model"
 	"go-pos/repository"
 )
@@ -9,7 +9,7 @@ import (
 type CategoryUseCase interface {
 	ListCategory(limit, skip int) []model.CategoryResp
 	DetailCategory(id int) model.CategoryResp
-	CreateCategory(category apprequest.CategoryRequest) (model.Category, error)
+	CreateCategory(category apprequest.CategoryRequest) (model.CategoryResp, error)
 	UpdateCategory(category apprequest.CategoryRequest, id int) error
 	DeleteCategory(id int) error
 }
@@ -26,7 +26,7 @@ func (c categoryUseCase) DetailCategory(id int) model.CategoryResp {
 	return c.categoryRepo.GetById(id)
 }
 
-func (c categoryUseCase) CreateCategory(category apprequest.CategoryRequest) (model.Category, error) {
+func (c categoryUseCase) CreateCategory(category apprequest.CategoryRequest) (model.CategoryResp, error) {
 	newCategory := model.NewCategory(category.Name)
 	return c.categoryRepo.CreateCategory(newCategory)
 }

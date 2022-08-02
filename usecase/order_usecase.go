@@ -1,7 +1,7 @@
 package usecase
 
 import (
-	"go-pos/delivery/apprequest"
+	"go-pos/controller/apprequest"
 	"go-pos/model"
 	"go-pos/repository"
 )

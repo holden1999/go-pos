@@ -6,11 +6,11 @@ import (
 )
 
 type Category struct {
-	CategoryId uint `gorm:"primarykey"`
-	Name       string
-	CreatedAt  time.Time
-	UpdatedAt  time.Time
-	DeletedAt  gorm.DeletedAt `gorm:"index"`
+	CategoryId uint           `gorm:"primaryKey" json:"categoryId"`
+	Name       string         `json:"name"`
+	CreatedAt  time.Time      `json:"createdAt"`
+	UpdatedAt  time.Time      `json:"updatedAt"`
+	DeletedAt  gorm.DeletedAt `gorm:"index" json:"deletedAt"`
 }
 
 type CategoryData struct {
@@ -19,8 +19,19 @@ type CategoryData struct {
 }
 
 type CategoryResp struct {
-	CategoryId uint   `gorm:"column:id" json:"categoryId"`
+	CategoryId int       `json:"categoryId"`
+	Name       string    `json:"name"`
+	UpdatedAt  time.Time `json:"updatedAt"`
+	CreatedAt  time.Time `json:"createdAt"`
+}
+
+type CategoryProductResp struct {
+	CategoryId int    `json:"categoryId"`
 	Name       string `json:"name"`
+}
+
+func (CategoryProductResp) TableName() string {
+	return "categories"
 }
 
 func (CategoryResp) TableName() string {

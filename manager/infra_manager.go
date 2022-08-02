@@ -6,6 +6,7 @@ import (
 	"go-pos/model"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"log"
 )
 
 type InfraManager interface {
@@ -17,8 +18,9 @@ type infraManager struct {
 }
 
 func (i infraManager) SqlDb() *gorm.DB {
-	err := i.db.AutoMigrate(&model.Cashier{}, &model.Category{}, &model.Credential{}, &model.Discount{}, &model.Order{}, &model.Payment{}, model.Product{})
+	err := i.db.AutoMigrate(&model.Cashier{}, &model.Category{}, &model.Credential{}, &model.Order{}, &model.Payment{}, model.Product{}, model.Discount{})
 	if err != nil {
+		log.Println(err)
 		return nil
 	}
 	return i.db

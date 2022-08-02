@@ -1,8 +1,9 @@
 package api
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
-	"go-pos/delivery/apprequest"
+	"go-pos/controller/apprequest"
 	"go-pos/model"
 	"go-pos/usecase"
 	"strconv"
@@ -19,7 +20,7 @@ func (api *CashierApi) InitRouter() {
 	api.publicRoute.GET("/:cashierId", api.DetailCashier)
 	api.publicRoute.POST("", api.CreateCashier)
 	api.publicRoute.PUT("/:cashierId", api.UpdateCashier)
-	api.publicRoute.DELETE("", api.DeleteCashier)
+	api.publicRoute.DELETE("/:cashierId", api.DeleteCashier)
 }
 
 func (api *CashierApi) ListCashier(c *gin.Context) {
@@ -39,7 +40,8 @@ func (api *CashierApi) CreateCashier(c *gin.Context) {
 	c.BindJSON(&createCashier)
 	data, err := api.cashierUseCase.CreateCashier(createCashier)
 	if err != nil {
-		c.AbortWithStatusJSON(400, err.Error())
+		api.Error(c, 400, "Incomplete data")
+		return
 	}
 	api.Success(c, "Success", data)
 }
@@ -49,7 +51,8 @@ func (api *CashierApi) DetailCashier(c *gin.Context) {
 	data, _ := strconv.Atoi(id)
 	result, err := api.cashierUseCase.DetailCashier(data)
 	if err != nil {
-		c.AbortWithStatusJSON(400, err.Error())
+		api.Error(c, 400, "Error detail cashier")
+		return
 	}
 	api.Success(c, "Success", result)
 }
@@ -57,27 +60,32 @@ func (api *CashierApi) DetailCashier(c *gin.Context) {
 func (api *CashierApi) UpdateCashier(c *gin.Context) {
 	id := c.Param("cashierId")
 	if id == "" {
-		c.AbortWithStatusJSON(404, "ID doesn't exist")
+		api.Error(c, 400, "ID doesn't exist")
+		return
 	}
 	data, _ := strconv.Atoi(id)
 	var updateCashier apprequest.Cashier
 	c.BindJSON(&updateCashier)
 	err := api.cashierUseCase.UpdateCashier(updateCashier, data)
 	if err != nil {
-		c.AbortWithStatusJSON(200, err.Error())
+		api.Error(c, 400, "ID doesn't exist")
+		return
 	}
 	api.SuccessNotif(c, "Success")
 }
 
 func (api *CashierApi) DeleteCashier(c *gin.Context) {
 	id := c.Param("cashierId")
-	if id == "" {
+	fmt.Println(id)
+	if id == ":cashierId" {
 		c.AbortWithStatusJSON(404, "ID doesn't exist")
+		return
 	}
 	data, _ := strconv.Atoi(id)
 	err := api.cashierUseCase.DeleteCashier(data)
 	if err != nil {
-		c.AbortWithStatusJSON(400, err.Error())
+		api.Error(c, 404, "Error delete cashier")
+		return
 	}
 	api.SuccessNotif(c, "Success")
 }
