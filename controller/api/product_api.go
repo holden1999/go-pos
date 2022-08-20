@@ -42,7 +42,11 @@ func (api *ProductApi) ListProduct(c *gin.Context) {
 
 func (api *ProductApi) DetailProduct(c *gin.Context) {
 	id := c.Param("productId")
-	data, _ := strconv.Atoi(id)
+	data, err := strconv.Atoi(id)
+	if err != nil {
+		api.Error(c, 400, "ID doesn't exist")
+		return
+	}
 	result := api.productUseCase.DetailProduct(data)
 	api.Success(c, "Success", result)
 }
@@ -59,14 +63,14 @@ func (api *ProductApi) CreateProduct(c *gin.Context) {
 
 func (api *ProductApi) UpdateProduct(c *gin.Context) {
 	id := c.Param("productId")
-	if id == "productId" {
-		api.Error(c, 404, "ID doesn't match")
+	data, err := strconv.Atoi(id)
+	if err != nil {
+		api.Error(c, 400, "ID doesn't exist")
 		return
 	}
-	data, _ := strconv.Atoi(id)
 	var updateProduct apprequest.ProductRequest
 	c.BindJSON(&updateProduct)
-	err := api.productUseCase.UpdateProduct(updateProduct, data)
+	err = api.productUseCase.UpdateProduct(updateProduct, data)
 	if err != nil {
 		api.Error(c, 400, "Product data doesn't match")
 		return
@@ -76,12 +80,12 @@ func (api *ProductApi) UpdateProduct(c *gin.Context) {
 
 func (api *ProductApi) DeleteProduct(c *gin.Context) {
 	id := c.Param("productId")
-	if id == "productId" {
-		api.Error(c, 404, "ID doesn't exist")
+	data, err := strconv.Atoi(id)
+	if err != nil {
+		api.Error(c, 404, "ID doesn't match")
 		return
 	}
-	data, _ := strconv.Atoi(id)
-	err := api.productUseCase.DeleteProduct(data)
+	err = api.productUseCase.DeleteProduct(data)
 	if err != nil {
 		api.Error(c, 404, "Data not found")
 		return

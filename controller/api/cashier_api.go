@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"go-pos/controller/apprequest"
 	"go-pos/model"
@@ -48,7 +47,11 @@ func (api *CashierApi) CreateCashier(c *gin.Context) {
 
 func (api *CashierApi) DetailCashier(c *gin.Context) {
 	id := c.Param("cashierId")
-	data, _ := strconv.Atoi(id)
+	data, err := strconv.Atoi(id)
+	if err != nil {
+		api.Error(c, 400, "ID doesn't exist")
+		return
+	}
 	result, err := api.cashierUseCase.DetailCashier(data)
 	if err != nil {
 		api.Error(c, 400, "Error detail cashier")
@@ -59,16 +62,16 @@ func (api *CashierApi) DetailCashier(c *gin.Context) {
 
 func (api *CashierApi) UpdateCashier(c *gin.Context) {
 	id := c.Param("cashierId")
-	if id == "" {
-		api.Error(c, 400, "ID doesn't exist")
+	data, err := strconv.Atoi(id)
+	if err != nil {
+		api.Error(c, 404, "ID doesn't exist")
 		return
 	}
-	data, _ := strconv.Atoi(id)
 	var updateCashier apprequest.Cashier
 	c.BindJSON(&updateCashier)
-	err := api.cashierUseCase.UpdateCashier(updateCashier, data)
+	err = api.cashierUseCase.UpdateCashier(updateCashier, data)
 	if err != nil {
-		api.Error(c, 400, "ID doesn't exist")
+		api.Error(c, 400, "Error update cashier")
 		return
 	}
 	api.SuccessNotif(c, "Success")
@@ -76,13 +79,12 @@ func (api *CashierApi) UpdateCashier(c *gin.Context) {
 
 func (api *CashierApi) DeleteCashier(c *gin.Context) {
 	id := c.Param("cashierId")
-	fmt.Println(id)
-	if id == ":cashierId" {
-		c.AbortWithStatusJSON(404, "ID doesn't exist")
+	data, err := strconv.Atoi(id)
+	if err != nil {
+		api.Error(c, 404, "ID doesn't exist")
 		return
 	}
-	data, _ := strconv.Atoi(id)
-	err := api.cashierUseCase.DeleteCashier(data)
+	err = api.cashierUseCase.DeleteCashier(data)
 	if err != nil {
 		api.Error(c, 404, "Error delete cashier")
 		return

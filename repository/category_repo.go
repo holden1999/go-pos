@@ -43,7 +43,10 @@ func (c *categoryRepo) CreateCategory(category model.Category) (model.CategoryRe
 }
 
 func (c *categoryRepo) UpdateCategory(category model.Category, id int) error {
-	c.db.First(&category, id)
+	err := c.db.First(&category, id)
+	if err != nil {
+		return err.Error
+	}
 	c.db.Save(&category)
 	return nil
 }

@@ -11,6 +11,7 @@ type authHeader struct {
 }
 
 type AuthTokenMiddleware struct {
+	CustomResp
 	accToken authenticator.MiddlewareToken
 }
 
@@ -19,13 +20,11 @@ func (a *AuthTokenMiddleware) RequireToken() gin.HandlerFunc {
 		h := authHeader{}
 		err := c.BindHeader(&h)
 		if err != nil {
-			c.AbortWithStatusJSON(401, "No token")
-			return
+			a.Error(c, 401, "Login Error")
 		}
 		tokenString := strings.Replace(h.AuthorizationHeader, "Bearer", "", -1)
 		if tokenString == "" {
-			c.AbortWithStatusJSON(401, "No token")
-			return
+			a.Error(c, 401, "Unauthorized")
 		}
 		token, _ := a.accToken.ValidateToken(tokenString)
 		c.JSON(200, token)

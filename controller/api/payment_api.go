@@ -49,8 +49,12 @@ func (api *PaymentApi) listPayment(c *gin.Context) {
 }
 
 func (api *PaymentApi) detailPayment(c *gin.Context) {
-	id := c.Param("cashierId")
-	data, _ := strconv.Atoi(id)
+	id := c.Param("paymentId")
+	data, err := strconv.Atoi(id)
+	if err != nil {
+		api.Error(c, 400, "ID doesn't exist")
+		return
+	}
 	result := api.paymentUseCase.DetailPayment(data)
 	api.Success(c, "Success", result)
 }
@@ -72,9 +76,13 @@ func (api *PaymentApi) createPayment(c *gin.Context) {
 
 func (api *PaymentApi) updatePayment(c *gin.Context) {
 	id := c.Param("paymentId")
-	data, _ := strconv.Atoi(id)
+	data, err := strconv.Atoi(id)
+	if err != nil {
+		api.Error(c, 400, "ID doesn't exist")
+		return
+	}
 	var updatePayment apprequest.PaymentRequest
-	err := c.ShouldBindJSON(&updatePayment)
+	err = c.ShouldBindJSON(&updatePayment)
 	if err != nil {
 		c.AbortWithStatusJSON(400, err.Error())
 		return
@@ -89,8 +97,12 @@ func (api *PaymentApi) updatePayment(c *gin.Context) {
 
 func (api *PaymentApi) deletePayment(c *gin.Context) {
 	id := c.Param("paymentId")
-	data, _ := strconv.Atoi(id)
-	err := api.paymentUseCase.DeletePayment(data)
+	data, err := strconv.Atoi(id)
+	if err != nil {
+		api.Error(c, 400, "ID doesn't exist")
+		return
+	}
+	err = api.paymentUseCase.DeletePayment(data)
 	if err != nil {
 		c.AbortWithStatusJSON(400, err.Error())
 		return
