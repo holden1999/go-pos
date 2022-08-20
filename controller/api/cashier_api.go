@@ -71,7 +71,7 @@ func (api *CashierApi) UpdateCashier(c *gin.Context) {
 	c.BindJSON(&updateCashier)
 	err = api.cashierUseCase.UpdateCashier(updateCashier, data)
 	if err != nil {
-		api.Error(c, 400, "Error update cashier")
+		api.Error(c, 404, err.Error())
 		return
 	}
 	api.SuccessNotif(c, "Success")
@@ -86,7 +86,7 @@ func (api *CashierApi) DeleteCashier(c *gin.Context) {
 	}
 	err = api.cashierUseCase.DeleteCashier(data)
 	if err != nil {
-		api.Error(c, 404, "Error delete cashier")
+		api.Error(c, 404, err.Error())
 		return
 	}
 	api.SuccessNotif(c, "Success")

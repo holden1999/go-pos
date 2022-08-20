@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"errors"
 	"go-pos/model"
 	"gorm.io/gorm"
 )
@@ -40,17 +41,27 @@ func (p *paymentRepo) CreatePayment(payment model.Payment) (model.Payment, error
 }
 
 func (p *paymentRepo) UpdatePayment(payment model.Payment, id int) error {
-	err := p.db.First(&payment, id)
+	err := p.db.Model(&payment).Where("id = ?", id).Updates(model.Payment{
+		Name: payment.Name,
+		Type: payment.Type,
+		Logo: payment.Logo,
+	})
+	if (model.Payment{} == payment) {
+		return errors.New("cashier Not Found")
+	}
 	if err != nil {
 		return err.Error
 	}
-	p.db.Save(&payment)
 	return nil
 }
 
 func (p *paymentRepo) DeletePayment(id int) error {
 	var payment model.Payment
-	err := p.db.Delete(&payment, id)
+	err := p.db.First(&payment, id)
+	if (model.Payment{} == payment) {
+		return errors.New("payment Not Found")
+	}
+	err = p.db.Delete(&payment, id)
 	if err != nil {
 		return err.Error
 	}
