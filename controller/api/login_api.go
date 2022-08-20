@@ -22,6 +22,10 @@ func (api *LoginApi) InitRouter() {
 
 func (api *LoginApi) Passcode(c *gin.Context) {
 	id := c.Param("cashierId")
+	if id == ":cashierId" {
+		api.Error(c, 404, "ID empty")
+		return
+	}
 	data, _ := strconv.Atoi(id)
 	result := api.loginUseCase.GetPasscode(data)
 	if result.Passcode == "" {
@@ -37,7 +41,11 @@ func (api *LoginApi) VerifyLogin(c *gin.Context) {
 		result     model.LoginResp
 	)
 	id := c.Param("cashierId")
-	intId, _ := strconv.Atoi(id)
+	intId, err := strconv.Atoi(id)
+	if err != nil {
+		api.Error(c, 400, "ID doesn't exist")
+		return
+	}
 	cashierId := uint(intId)
 	c.BindJSON(&credential)
 	isUserAuthenticated := api.loginUseCase.LoginUser(cashierId, credential.Passcode)

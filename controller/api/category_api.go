@@ -43,7 +43,11 @@ func (api *CategoryApi) listCategory(c *gin.Context) {
 
 func (api *CategoryApi) detailCategory(c *gin.Context) {
 	id := c.Param("categoryId")
-	data, _ := strconv.Atoi(id)
+	data, err := strconv.Atoi(id)
+	if err != nil {
+		api.Error(c, 400, "ID doesn't exist")
+		return
+	}
 	result := api.categoryUseCase.DetailCategory(data)
 	api.Success(c, "Success", result)
 }
@@ -62,28 +66,29 @@ func (api *CategoryApi) createCategory(c *gin.Context) {
 
 func (api *CategoryApi) updateCategory(c *gin.Context) {
 	id := c.Param("categoryId")
-	if id == "categoryId" {
-		api.Error(c, 404, "ID empty")
+	data, err := strconv.Atoi(id)
+	if err != nil {
+		api.Error(c, 400, "ID doesn't exist")
 		return
 	}
-	data, _ := strconv.Atoi(id)
 	var updateCategory apprequest.CategoryRequest
 	c.BindJSON(&updateCategory)
-	err := api.categoryUseCase.UpdateCategory(updateCategory, data)
+	err = api.categoryUseCase.UpdateCategory(updateCategory, data)
 	if err != nil {
 		api.Error(c, 404, "Error update category")
+		return
 	}
 	api.SuccessNotif(c, "Success")
 }
 
 func (api *CategoryApi) deleteCategory(c *gin.Context) {
 	id := c.Param("categoryId")
-	if id == "categoryId" {
-		api.Error(c, 404, "ID empty")
+	data, err := strconv.Atoi(id)
+	if err != nil {
+		api.Error(c, 400, "ID doesn't exist")
 		return
 	}
-	data, _ := strconv.Atoi(id)
-	err := api.categoryUseCase.DeleteCategory(data)
+	err = api.categoryUseCase.DeleteCategory(data)
 	if err != nil {
 		api.Error(c, 404, "Error delete category")
 		return

@@ -40,7 +40,10 @@ func (p *paymentRepo) CreatePayment(payment model.Payment) (model.Payment, error
 }
 
 func (p *paymentRepo) UpdatePayment(payment model.Payment, id int) error {
-	p.db.First(&payment, id)
+	err := p.db.First(&payment, id)
+	if err != nil {
+		return err.Error
+	}
 	p.db.Save(&payment)
 	return nil
 }

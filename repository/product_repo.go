@@ -45,7 +45,10 @@ func (p *productRepo) CreateProduct(product model.Product, discount model.Discou
 }
 
 func (p *productRepo) UpdateProduct(product model.Product, id int) error {
-	p.db.First(&product, id)
+	err := p.db.First(&product, id)
+	if err != nil {
+		return err.Error
+	}
 	p.db.Save(&product)
 	return nil
 }
