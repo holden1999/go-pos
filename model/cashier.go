@@ -11,9 +11,12 @@ type CashierData struct {
 }
 
 type Cashier struct {
-	gorm.Model
-	Name     string
-	Passcode string
+	ID        uint `gorm:"primarykey"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt gorm.DeletedAt `gorm:"index"`
+	Name      string
+	Passcode  string
 }
 
 type CashierResp struct {
