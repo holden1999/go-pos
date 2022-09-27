@@ -49,13 +49,14 @@ func (c *cashierRepo) CreateCashier(cashier model.Cashier) (model.CreateCashierR
 }
 
 func (c *cashierRepo) UpdateCashier(cashier model.Cashier, id int) error {
-	err := c.db.Model(&cashier).Where("id = ?", id).Updates(model.Cashier{
+	err := c.db.First(&cashier, id)
+	if err != nil {
+		return err.Error
+	}
+	err = c.db.Model(&cashier).Where("id = ?", id).Updates(model.Cashier{
 		Name:     cashier.Name,
 		Passcode: cashier.Passcode,
 	})
-	if (model.Cashier{} == cashier) {
-		return errors.New("cashier Not Found")
-	}
 	if err != nil {
 		return err.Error
 	}

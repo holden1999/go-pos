@@ -68,7 +68,11 @@ func (api *CashierApi) UpdateCashier(c *gin.Context) {
 		return
 	}
 	var updateCashier apprequest.Cashier
-	c.BindJSON(&updateCashier)
+	err = c.BindJSON(&updateCashier)
+	if err != nil {
+		api.Error(c, 400, "Error update cashier")
+		return
+	}
 	err = api.cashierUseCase.UpdateCashier(updateCashier, data)
 	if err != nil {
 		api.Error(c, 404, err.Error())

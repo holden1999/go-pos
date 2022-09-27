@@ -6,7 +6,7 @@ import (
 )
 
 type CashierData struct {
-	Cashiers interface{} `json:"cashiers"`
+	Cashiers []CashierResp `json:"cashiers"`
 	Meta     `json:"meta"`
 }
 
