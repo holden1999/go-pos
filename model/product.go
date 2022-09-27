@@ -6,7 +6,7 @@ import (
 )
 
 type ProductData struct {
-	Products interface{} `json:"products"`
+	Products []ProductResp `json:"products"`
 	Meta     `json:"meta"`
 }
 

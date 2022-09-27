@@ -6,7 +6,7 @@ import (
 )
 
 type ProductRepo interface {
-	ListProduct(limit, skip, categoryId int) []model.ProductResp
+	ListProduct(limit, skip, categoryId int, query string) []model.ProductResp
 	GetById(id int) model.ProductResp
 	CreateProduct(product model.Product, discount model.Discount) (model.NewProductResp, error)
 	UpdateProduct(product model.Product, id int) error
@@ -17,10 +17,10 @@ type productRepo struct {
 	db *gorm.DB
 }
 
-func (p *productRepo) ListProduct(limit, skip, categoryId int) []model.ProductResp {
+func (p *productRepo) ListProduct(limit, skip, categoryId int, query string) []model.ProductResp {
 	var result []model.ProductResp
 	p.db.Scopes(func(db *gorm.DB) *gorm.DB {
-		return db.Where("category_id = ?", categoryId).Offset(skip).Limit(limit)
+		return db.Where("category_id = ? and name = ?", categoryId, query).Offset(skip).Limit(limit)
 	}).Find(&result)
 	return result
 }

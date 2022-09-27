@@ -14,7 +14,7 @@ type Category struct {
 }
 
 type CategoryData struct {
-	Category interface{} `json:"categories"`
+	Category []CategoryResp `json:"categories"`
 	Meta     `json:"meta"`
 }
 

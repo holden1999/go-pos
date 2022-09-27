@@ -33,7 +33,8 @@ func (api *ProductApi) ListProduct(c *gin.Context) {
 	meta.Limit, _ = strconv.Atoi(c.DefaultQuery("limit", "10"))
 	meta.Skip, _ = strconv.Atoi(c.DefaultQuery("skip", "0"))
 	categoryId, _ := strconv.Atoi(c.Query("categoryId"))
-	result := api.productUseCase.ListProduct(meta.Limit, meta.Skip, categoryId)
+	query := c.Query("q")
+	result := api.productUseCase.ListProduct(meta.Limit, meta.Skip, categoryId, query)
 	data.Products = result
 	meta.Total = len(result)
 	data.Meta = meta

@@ -3,7 +3,7 @@ package model
 import "gorm.io/gorm"
 
 type PaymentData struct {
-	Payment interface{} `json:"payments"`
+	Payment []PaymentResp `json:"payments"`
 	Meta    `json:"meta"`
 }
 
