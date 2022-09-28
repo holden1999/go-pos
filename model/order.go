@@ -1,8 +1,9 @@
 package model
 
 import (
-	"gorm.io/gorm"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 type OrderData struct {
@@ -12,8 +13,8 @@ type OrderData struct {
 
 type OrderResp struct {
 	OrderId       uint        `gorm:"id"`
-	CashierId     CashierResp `gorm:"embedded" gorm:"column:id" json:"cashierId"`
-	PaymentTypeId PaymentResp `gorm:"embedded" gorm:"column:id" json:"paymentTypeId"`
+	CashierId     CashierResp `gorm:"embedded,column:id" json:"cashierId"`
+	PaymentTypeId PaymentResp `gorm:"embedded,column:id" json:"paymentTypeId"`
 	TotalPrice    string      `json:"totalPrice"`
 	TotalPaid     string      `json:"totalPaid"`
 	TotalReturn   string      `json:"totalReturn"`
@@ -22,9 +23,10 @@ type OrderResp struct {
 	Cashier       CashierResp `gorm:"embedded" json:"cashier"`
 }
 
-type ListOrder struct {
-	OrderResp
-	OrderPaymentResp
+type CreateOrder struct {
+	PaymentId uint           `json:"paymentId" binding:"required"`
+	TotalPaid uint           `json:"totalPaid" binding:"required"`
+	Products  []ProductOrder `json:"products" binding:"required"`
 }
 
 type Order struct {

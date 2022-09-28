@@ -1,8 +1,10 @@
 package middleware
 
 import (
-	"github.com/gin-gonic/gin"
 	"go-pos/controller/commonresp"
+	"go-pos/model"
+
+	"github.com/gin-gonic/gin"
 )
 
 type CustomResp struct {
@@ -19,7 +21,7 @@ func (b *CustomResp) Success(c *gin.Context, message string, data interface{}) {
 	commonresp.NewJsonResponse(c).SendData(commonresp.NewResponseMessage(message, data))
 }
 
-func (b *CustomResp) SuccessList(c *gin.Context, message string, data interface{}, meta interface{}) {
+func (b *CustomResp) SuccessList(c *gin.Context, message string, data interface{}, meta model.Meta) {
 	commonresp.NewJsonResponse(c).SendListData(commonresp.NewListResponseMessage(message, data, meta))
 }
 

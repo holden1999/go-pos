@@ -2,6 +2,7 @@ package repository
 
 import (
 	"go-pos/model"
+
 	"gorm.io/gorm"
 )
 
@@ -35,8 +36,7 @@ func (p *productRepo) GetById(id int) model.ProductResp {
 
 func (p *productRepo) CreateProduct(product model.Product, discount model.Discount) (model.NewProductResp, error) {
 	var data model.NewProductResp
-	err := p.db.Create(&product)
-	err = p.db.Create(&discount)
+	err := p.db.Create(&product).Create(&discount)
 	p.db.Find(&data, product)
 	if err != nil {
 		return data, err.Error
