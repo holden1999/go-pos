@@ -1,6 +1,9 @@
 package commonresp
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"go-pos/model"
+)
 
 type AppHttpResponse interface {
 	SendData(message ResponseMessage)
@@ -19,7 +22,7 @@ type ListResponseMessage struct {
 	Success bool        `json:"success"`
 	Message string      `json:"message"`
 	Data    interface{} `json:"data"`
-	Meta    interface{} `json:"meta"`
+	Meta    model.Meta  `json:"meta"`
 }
 
 type ResponseMessageNoData struct {
@@ -46,7 +49,7 @@ func NewResponseMessage(message string, data interface{}) ResponseMessage {
 	}
 }
 
-func NewListResponseMessage(message string, data interface{}, meta interface{}) ListResponseMessage {
+func NewListResponseMessage(message string, data interface{}, meta model.Meta) ListResponseMessage {
 	return ListResponseMessage{
 		true, message, data, meta,
 	}

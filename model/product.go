@@ -1,8 +1,9 @@
 package model
 
 import (
-	"gorm.io/gorm"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 type ProductData struct {
@@ -34,6 +35,11 @@ type NewProductResp struct {
 	Stock      int       `json:"stock"`
 	UpdatedAt  time.Time `json:"updatedAt"`
 	CreatedAt  time.Time `json:"createdAt"`
+}
+
+type ProductOrder struct {
+	ProductId uint `json:"productId"`
+	Qty       uint `json:"qty"`
 }
 
 type ProductResp struct {

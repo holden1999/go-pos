@@ -3,6 +3,7 @@ package repository
 import (
 	"errors"
 	"go-pos/model"
+
 	"gorm.io/gorm"
 )
 
@@ -67,7 +68,7 @@ func (c *cashierRepo) DeleteCashier(id int) error {
 	var cashier model.Cashier
 	err := c.db.First(&cashier, id)
 	if (model.Cashier{} == cashier) {
-		return errors.New("cashier Not Found")
+		return err.Error
 	}
 	err = c.db.Delete(&cashier, id)
 	if err != nil {

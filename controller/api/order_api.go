@@ -1,12 +1,13 @@
 package api
 
 import (
-	"github.com/gin-gonic/gin"
 	"go-pos/authenticator"
 	"go-pos/controller/middleware"
 	"go-pos/model"
 	"go-pos/usecase"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 type OrderApi struct {
@@ -64,20 +65,14 @@ func (api *OrderApi) SubTotalOrder(c *gin.Context) {
 }
 
 func (api *OrderApi) AddOrder(c *gin.Context) {
-	categoryId := c.PostForm("categoryId")
-	name := c.PostForm("name")
-	image := c.PostForm("image")
-	price := c.PostForm("price")
-	stock := c.PostForm("stock")
-	discount := c.PostForm("discount")
-	c.JSON(200, gin.H{
-		"categoryId": categoryId,
-		"name":       name,
-		"image":      image,
-		"price":      price,
-		"stock":      stock,
-		"discount":   discount,
-	})
+	var order model.CreateOrder
+	c.BindJSON(&order)
+	if order.Products == nil {
+		api.Error(c, 400, "product empty")
+		return
+	}
+	api.Success(c, "Order placed", order)
+
 }
 
 func (api *OrderApi) DownloadOrder(c *gin.Context) {
