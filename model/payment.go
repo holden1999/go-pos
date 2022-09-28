@@ -1,10 +1,22 @@
 package model
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+	"time"
+)
 
 type PaymentData struct {
 	Payment []PaymentResp `json:"payments"`
 	Meta    `json:"meta"`
+}
+
+type NewPaymentResp struct {
+	Name      string    `json:"name"`
+	Type      string    `json:"type"`
+	Logo      string    `json:"logo"`
+	UpdateAt  time.Time `json:"updateAt"`
+	CreatedAt time.Time `json:"createdAt"`
+	PaymentId uint      `json:"paymentId"`
 }
 
 type PaymentResp struct {
@@ -22,10 +34,17 @@ type OrderPaymentResp struct {
 }
 
 type Payment struct {
-	Name string
-	Type string
-	Logo string
-	gorm.Model
+	PaymentId uint           `gorm:"primaryKey" json:"paymentId"`
+	Name      string         `json:"name"`
+	Type      string         `json:"type"`
+	Logo      string         `json:"logo"`
+	CreatedAt time.Time      `json:"createdAt"`
+	UpdateAt  time.Time      `json:"updateAt"`
+	DeleteAt  gorm.DeletedAt `gorm:"index" json:"deleteAt"`
+}
+
+func (NewPaymentResp) TableName() string {
+	return "payments"
 }
 
 func NewPayment(name string, tipe string, logo string) Payment {

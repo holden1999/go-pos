@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"go-pos/controller/commonresp"
 )
 
@@ -29,4 +30,8 @@ func (b *BaseApi) SuccessNotif(c *gin.Context, message string) {
 
 func (b *BaseApi) Error(c *gin.Context, code int, message string) {
 	commonresp.NewJsonResponse(c).SendError(code, commonresp.NewErrorMessage(message))
+	logrus.WithFields(logrus.Fields{
+		"animal": "walrus",
+		"size":   10,
+	}).Info("A group of walrus emerges from the ocean")
 }

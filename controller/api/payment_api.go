@@ -1,13 +1,14 @@
 package api
 
 import (
-	"github.com/gin-gonic/gin"
 	"go-pos/authenticator"
 	"go-pos/controller/apprequest"
 	"go-pos/controller/middleware"
 	"go-pos/model"
 	"go-pos/usecase"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 type PaymentApi struct {
@@ -25,17 +26,17 @@ func NewPaymentApi(publicRoute *gin.RouterGroup, paymentUseCase usecase.PaymentU
 }
 
 func (api *PaymentApi) InitRouter() {
-	api.publicRoute.POST("", api.createPayment)
-	api.publicRoute.PUT("/:payments", api.updatePayment)
-	api.publicRoute.DELETE("/:payments", api.deletePayment)
+	api.publicRoute.POST("", api.CreatePayment)
+	api.publicRoute.PUT("/:payments", api.UpdatePayment)
+	api.publicRoute.DELETE("/:payments", api.DeletePayment)
 
 	tokenService := authenticator.NewTokenConfig()
 	api.publicRoute.Use(middleware.NewTokenValidator(&tokenService).RequireToken())
-	api.publicRoute.GET("", api.listPayment)
-	api.publicRoute.GET("/:payments", api.detailPayment)
+	api.publicRoute.GET("", api.ListPayment)
+	api.publicRoute.GET("/:payments", api.DetailPayment)
 }
 
-func (api *PaymentApi) listPayment(c *gin.Context) {
+func (api *PaymentApi) ListPayment(c *gin.Context) {
 	var meta model.Meta
 	var data model.PaymentData
 	meta.Limit, _ = strconv.Atoi(c.DefaultQuery("limit", "10"))
@@ -48,18 +49,22 @@ func (api *PaymentApi) listPayment(c *gin.Context) {
 	api.Success(c, "Success", data)
 }
 
-func (api *PaymentApi) detailPayment(c *gin.Context) {
+func (api *PaymentApi) DetailPayment(c *gin.Context) {
 	id := c.Param("paymentId")
 	data, err := strconv.Atoi(id)
 	if err != nil {
 		api.Error(c, 400, "ID doesn't exist")
 		return
 	}
-	result := api.paymentUseCase.DetailPayment(data)
+	result, err := api.paymentUseCase.DetailPayment(data)
 	api.Success(c, "Success", result)
+	if err != nil {
+		api.Error(c, 500, "Server Error")
+		return
+	}
 }
 
-func (api *PaymentApi) createPayment(c *gin.Context) {
+func (api *PaymentApi) CreatePayment(c *gin.Context) {
 	var createPayment apprequest.PaymentRequest
 	err := c.ShouldBindJSON(&createPayment)
 	if err != nil {
@@ -74,7 +79,7 @@ func (api *PaymentApi) createPayment(c *gin.Context) {
 	api.Success(c, "Success", data)
 }
 
-func (api *PaymentApi) updatePayment(c *gin.Context) {
+func (api *PaymentApi) UpdatePayment(c *gin.Context) {
 	id := c.Param("paymentId")
 	data, err := strconv.Atoi(id)
 	if err != nil {
@@ -95,7 +100,7 @@ func (api *PaymentApi) updatePayment(c *gin.Context) {
 	api.SuccessNotif(c, "Success")
 }
 
-func (api *PaymentApi) deletePayment(c *gin.Context) {
+func (api *PaymentApi) DeletePayment(c *gin.Context) {
 	id := c.Param("paymentId")
 	data, err := strconv.Atoi(id)
 	if err != nil {

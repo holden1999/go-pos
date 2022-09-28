@@ -6,6 +6,7 @@ import (
 	"go-pos/model"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 	"log"
 )
 
@@ -28,7 +29,9 @@ func (i infraManager) SqlDb() *gorm.DB {
 
 func initDb(dataSourceName string) *gorm.DB {
 	sqlDB, _ := sql.Open("mysql", dataSourceName)
-	conn, _ := gorm.Open(mysql.New(mysql.Config{Conn: sqlDB}), &gorm.Config{})
+	conn, _ := gorm.Open(mysql.New(mysql.Config{Conn: sqlDB}), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Silent),
+	})
 
 	return conn
 }

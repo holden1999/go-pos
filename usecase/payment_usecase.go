@@ -8,8 +8,8 @@ import (
 
 type PaymentUseCase interface {
 	ListPayment(limit, skip, subtotal int) []model.PaymentResp
-	DetailPayment(id int) model.Payment
-	CreatePayment(payment apprequest.PaymentRequest) (model.Payment, error)
+	DetailPayment(id int) (model.PaymentResp, error)
+	CreatePayment(payment apprequest.PaymentRequest) (model.NewPaymentResp, error)
 	UpdatePayment(payment apprequest.PaymentRequest, id int) error
 	DeletePayment(id int) error
 }
@@ -22,11 +22,11 @@ func (p paymentUseCase) ListPayment(limit, skip, subtotal int) []model.PaymentRe
 	return p.paymentRepo.ListPayment(limit, skip, subtotal)
 }
 
-func (p paymentUseCase) DetailPayment(id int) model.Payment {
+func (p paymentUseCase) DetailPayment(id int) (model.PaymentResp, error) {
 	return p.paymentRepo.GetById(id)
 }
 
-func (p paymentUseCase) CreatePayment(payment apprequest.PaymentRequest) (model.Payment, error) {
+func (p paymentUseCase) CreatePayment(payment apprequest.PaymentRequest) (model.NewPaymentResp, error) {
 	newPayment := model.NewPayment(payment.Name, payment.Type, payment.Logo)
 	return p.paymentRepo.CreatePayment(newPayment)
 }
