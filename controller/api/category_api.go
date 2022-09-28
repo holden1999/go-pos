@@ -1,13 +1,14 @@
 package api
 
 import (
-	"github.com/gin-gonic/gin"
 	"go-pos/authenticator"
 	"go-pos/controller/apprequest"
 	"go-pos/controller/middleware"
 	"go-pos/model"
 	"go-pos/usecase"
 	"log"
+
+	"github.com/gin-gonic/gin"
 
 	"strconv"
 )
@@ -19,17 +20,17 @@ type CategoryApi struct {
 }
 
 func (api *CategoryApi) InitRouter() {
-	api.publicRoute.POST("", api.createCategory)
-	api.publicRoute.PUT("/:categoryId", api.updateCategory)
-	api.publicRoute.DELETE("/:categoryId", api.updateCategory)
+	api.publicRoute.POST("", api.CreateCategory)
+	api.publicRoute.PUT("/:categoryId", api.UpdateCategory)
+	api.publicRoute.DELETE("/:categoryId", api.DeleteCategory)
 
 	tokenService := authenticator.NewTokenConfig()
 	api.publicRoute.Use(middleware.NewTokenValidator(&tokenService).RequireToken())
-	api.publicRoute.GET("", api.listCategory)
-	api.publicRoute.GET("/:categoryId", api.detailCategory)
+	api.publicRoute.GET("", api.ListCategory)
+	api.publicRoute.GET("/:categoryId", api.DetailCategory)
 }
 
-func (api *CategoryApi) listCategory(c *gin.Context) {
+func (api *CategoryApi) ListCategory(c *gin.Context) {
 	var meta model.Meta
 	var data model.CategoryData
 	meta.Limit, _ = strconv.Atoi(c.DefaultQuery("limit", "10"))
@@ -41,7 +42,7 @@ func (api *CategoryApi) listCategory(c *gin.Context) {
 	api.Success(c, "Success", data)
 }
 
-func (api *CategoryApi) detailCategory(c *gin.Context) {
+func (api *CategoryApi) DetailCategory(c *gin.Context) {
 	id := c.Param("categoryId")
 	data, err := strconv.Atoi(id)
 	if err != nil {
@@ -52,7 +53,7 @@ func (api *CategoryApi) detailCategory(c *gin.Context) {
 	api.Success(c, "Success", result)
 }
 
-func (api *CategoryApi) createCategory(c *gin.Context) {
+func (api *CategoryApi) CreateCategory(c *gin.Context) {
 	var createCategory apprequest.CategoryRequest
 	c.BindJSON(&createCategory)
 	log.Println(createCategory.Name)
@@ -64,7 +65,7 @@ func (api *CategoryApi) createCategory(c *gin.Context) {
 	api.Success(c, "Success", data)
 }
 
-func (api *CategoryApi) updateCategory(c *gin.Context) {
+func (api *CategoryApi) UpdateCategory(c *gin.Context) {
 	id := c.Param("categoryId")
 	data, err := strconv.Atoi(id)
 	if err != nil {
@@ -81,7 +82,7 @@ func (api *CategoryApi) updateCategory(c *gin.Context) {
 	api.SuccessNotif(c, "Success")
 }
 
-func (api *CategoryApi) deleteCategory(c *gin.Context) {
+func (api *CategoryApi) DeleteCategory(c *gin.Context) {
 	id := c.Param("categoryId")
 	data, err := strconv.Atoi(id)
 	if err != nil {
