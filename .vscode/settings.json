@@ -3,8 +3,8 @@
     "editor.fontLigatures": true,
     "editor.lineHeight": 1.4,
     "editor.fontWeight": "normal",
-    "workbench.colorTheme": "Atom One Dark",
-    "editor.fontFamily": "JetBrains Mono, Menlo, Monaco, 'Courier New', monospace",
+    "workbench.colorTheme": "One Dark Pro",
+    "editor.fontFamily": "JetBrains Mono",
     "workbench.colorCustomizations": {
         "tab.activeBackground": "#282c34",
         "activityBar.background": "#282c34",
@@ -12,12 +12,10 @@
         "tab.activeBorder": "#d19a66"
     },
     "editor.tokenColorCustomizations": {
-        "[Atom One Dark]": {
+        "[One Dark Pro]": {
             "textMateRules": [
                 {
-                    "scope": [
-                        "source.go"
-                    ],
+                    "scope": ["source.go"],
                     "settings": {
                         "foreground": "#d19a66"
                     }
@@ -66,22 +64,4 @@
             }
         ]
     },
-    "workbench.preferredDarkColorTheme": "Atom One Dark",
-    "sqltools.connections": [
-        {
-            "mysqlOptions": {
-                "authProtocol": "default"
-            },
-            "previewLimit": 50,
-            "server": "localhost",
-            "port": 3306,
-            "driver": "MySQL",
-            "name": "pos",
-            "database": "pos",
-            "username": "root",
-            "password": "root"
-        }
-    ],
-    "json.schemas": [],
-    "editor.semanticTokenColorCustomizations": {}
 }
