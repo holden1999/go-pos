@@ -3,13 +3,14 @@ package repository
 import (
 	"errors"
 	"go-pos/model"
+
 	"gorm.io/gorm"
 )
 
 type PaymentRepo interface {
 	ListPayment(limit, skip, subtotal int) []model.PaymentResp
-	GetById(id int) model.Payment
-	CreatePayment(payment model.Payment) (model.Payment, error)
+	GetById(id int) (model.PaymentResp, error)
+	CreatePayment(payment model.Payment) (model.NewPaymentResp, error)
 	UpdatePayment(payment model.Payment, id int) error
 	DeletePayment(id int) error
 }
@@ -26,18 +27,23 @@ func (p *paymentRepo) ListPayment(limit, skip, subtotal int) []model.PaymentResp
 	return result
 }
 
-func (p *paymentRepo) GetById(id int) model.Payment {
-	result := model.Payment{}
-	p.db.First(&result, id)
-	return result
+func (p *paymentRepo) GetById(id int) (model.PaymentResp, error) {
+	result := model.PaymentResp{}
+	err := p.db.First(&result, id)
+	if err != nil {
+		return result, err.Error
+	}
+	return result, nil
 }
 
-func (p *paymentRepo) CreatePayment(payment model.Payment) (model.Payment, error) {
-	data := p.db.Create(&payment)
-	if data.Error != nil {
-		return payment, data.Error
+func (p *paymentRepo) CreatePayment(payment model.Payment) (model.NewPaymentResp, error) {
+	var data model.NewPaymentResp
+	err := p.db.Create(&payment)
+	p.db.Find(&data, payment)
+	if err != nil {
+		return data, err.Error
 	}
-	return payment, nil
+	return data, nil
 }
 
 func (p *paymentRepo) UpdatePayment(payment model.Payment, id int) error {
