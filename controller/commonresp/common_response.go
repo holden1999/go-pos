@@ -35,12 +35,14 @@ type ErrorMessage struct {
 	Message string `json:"message"`
 }
 
-func (e ErrorMessage) ToJson() string {
+func (e ErrorMessage) ToJson() map[string]any {
+	var resp map[string]any
 	b, err := json.Marshal(e)
 	if err != nil {
-		return ""
+		return nil
 	}
-	return string(b)
+	json.Unmarshal(b, &resp)
+	return resp
 }
 
 func NewResponseMessage(message string, data interface{}) ResponseMessage {
