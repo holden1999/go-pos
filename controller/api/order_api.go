@@ -5,6 +5,7 @@ import (
 	"go-pos/controller/middleware"
 	"go-pos/model"
 	"go-pos/usecase"
+	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -66,13 +67,12 @@ func (api *OrderApi) SubTotalOrder(c *gin.Context) {
 
 func (api *OrderApi) AddOrder(c *gin.Context) {
 	var order model.CreateOrder
-	c.BindJSON(&order)
-	if order.Products == nil {
-		api.Error(c, 400, "product empty")
+	err := c.BindJSON(&order)
+	if err != nil {
+		api.Error(c, http.StatusBadRequest, "empty body")
 		return
 	}
 	api.Success(c, "Order placed", order)
-
 }
 
 func (api *OrderApi) DownloadOrder(c *gin.Context) {

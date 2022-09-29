@@ -26,8 +26,7 @@ func (a *AuthTokenMiddleware) RequireToken() gin.HandlerFunc {
 		if tokenString == "" {
 			a.Error(c, 401, "Unauthorized")
 		}
-		token, _ := a.accToken.ValidateToken(tokenString)
-		c.JSON(200, token)
+		a.accToken.ValidateToken(tokenString)
 	}
 }
 
