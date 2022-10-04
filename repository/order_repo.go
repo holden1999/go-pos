@@ -6,28 +6,30 @@ import (
 )
 
 type OrderRepo interface {
-	ListOrder(limit, skip int) []model.OrderResp
-	GetById(id int) model.Order
+	ListOrder(limit, skip int) ([]model.OrderResp, error)
+	GetById(id int) (model.OrderResp, error)
 	CreateOrder(order model.Order) (model.Order, error)
-	SubTotalOrder(order model.Order) model.Order
+	SubTotalOrder(order model.Order) (model.Order, error)
 }
 
 type orderRepo struct {
 	db *gorm.DB
 }
 
-func (o *orderRepo) ListOrder(limit, skip int) []model.OrderResp {
+func (o *orderRepo) ListOrder(limit, skip int) ([]model.OrderResp, error) {
 	var result []model.OrderResp
 	o.db.Scopes(func(db *gorm.DB) *gorm.DB {
 		return db.Offset(skip).Limit(limit)
 	}).Find(&result)
-	return result
+	return result, nil
 }
 
-func (o *orderRepo) GetById(id int) model.Order {
-	result := model.Order{}
+func (o *orderRepo) GetById(id int) (model.OrderResp, error) {
+	result := model.OrderResp{}
 	o.db.First(&result, id)
-	return result
+	o.db.First(&result.Cashier)
+	o.db.First(&result.PaymentType)
+	return result, nil
 }
 
 func (o *orderRepo) CreateOrder(order model.Order) (model.Order, error) {
@@ -37,9 +39,9 @@ func (o *orderRepo) CreateOrder(order model.Order) (model.Order, error) {
 	}
 	return order, nil
 }
-func (o *orderRepo) SubTotalOrder(order model.Order) model.Order {
+func (o *orderRepo) SubTotalOrder(order model.Order) (model.Order, error) {
 	o.db.Create(&order)
-	return order
+	return order, nil
 }
 
 func NewOrderRepo(db *gorm.DB) OrderRepo {
