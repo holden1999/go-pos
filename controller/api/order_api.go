@@ -2,6 +2,7 @@ package api
 
 import (
 	"go-pos/authenticator"
+	"go-pos/controller/apprequest"
 	"go-pos/controller/middleware"
 	"go-pos/model"
 	"go-pos/usecase"
@@ -39,10 +40,13 @@ func (api *OrderApi) InitRouter() {
 
 func (api *OrderApi) ListOrder(c *gin.Context) {
 	var meta model.Meta
-	var data model.OrderData
+	var data model.ListOrder
 	meta.Limit, _ = strconv.Atoi(c.DefaultQuery("limit", "10"))
 	meta.Skip, _ = strconv.Atoi(c.DefaultQuery("skip", "0"))
-	result := api.orderUseCase.ListOrder(meta.Limit, meta.Skip)
+	result, err := api.orderUseCase.ListOrder(meta.Limit, meta.Skip)
+	if err != nil {
+		api.Error(c, 404, "Success")
+	}
 	data.List = result
 	meta.Total = len(result)
 	data.Meta = meta
@@ -50,9 +54,14 @@ func (api *OrderApi) ListOrder(c *gin.Context) {
 }
 
 func (api *OrderApi) DetailOrder(c *gin.Context) {
+	var order model.DetailOrder
 	id := c.Param("orderId")
-	data, _ := strconv.Atoi(id)
-	result := api.orderUseCase.DetailOrder(data)
+	data, err := strconv.Atoi(id)
+	if err != nil {
+		api.Error(c, 400, "ID doesn't exist")
+	}
+	result, _ := api.orderUseCase.DetailOrder(data)
+	order.Order = result
 	api.Success(c, "Success", result)
 }
 
@@ -66,13 +75,17 @@ func (api *OrderApi) SubTotalOrder(c *gin.Context) {
 }
 
 func (api *OrderApi) AddOrder(c *gin.Context) {
-	var order model.CreateOrder
+	var order apprequest.Order
 	err := c.BindJSON(&order)
 	if err != nil {
 		api.Error(c, http.StatusBadRequest, "empty body")
 		return
 	}
-	api.Success(c, "Order placed", order)
+	result, err := api.orderUseCase.CreateOrder(order)
+	if err != nil {
+		return
+	}
+	api.Success(c, "Order placed", result)
 }
 
 func (api *OrderApi) DownloadOrder(c *gin.Context) {

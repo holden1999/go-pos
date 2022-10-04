@@ -7,31 +7,31 @@ import (
 )
 
 type OrderUseCase interface {
-	ListOrder(limit, skip int) []model.OrderResp
-	DetailOrder(id int) model.Order
+	ListOrder(limit, skip int) ([]model.OrderResp, error)
+	DetailOrder(id int) (model.OrderResp, error)
 	CreateOrder(order apprequest.Order) (model.Order, error)
-	SubTotalOrder(order apprequest.Order) model.Order
+	SubTotalOrder(order apprequest.Order) (model.Order, error)
 }
 
 type orderUseCase struct {
 	orderRepo repository.OrderRepo
 }
 
-func (o orderUseCase) ListOrder(limit, skip int) []model.OrderResp {
+func (o *orderUseCase) ListOrder(limit, skip int) ([]model.OrderResp, error) {
 	return o.orderRepo.ListOrder(limit, skip)
 }
 
-func (o orderUseCase) DetailOrder(id int) model.Order {
+func (o *orderUseCase) DetailOrder(id int) (model.OrderResp, error) {
 	return o.orderRepo.GetById(id)
 }
 
-func (o orderUseCase) CreateOrder(order apprequest.Order) (model.Order, error) {
-	newOrder := model.NewOrder(order.TotalPrice, order.TotalPaid, order.TotalReturn, order.Product, order.Cashier, order.PaymentType)
+func (o *orderUseCase) CreateOrder(order apprequest.Order) (model.Order, error) {
+	newOrder := model.NewOrder(order.TotalPaid)
 	return o.orderRepo.CreateOrder(newOrder)
 }
 
-func (o orderUseCase) SubTotalOrder(order apprequest.Order) model.Order {
-	newOrder := model.NewOrder(order.TotalPrice, order.TotalPaid, order.TotalReturn, order.Product, order.Cashier, order.PaymentType)
+func (o *orderUseCase) SubTotalOrder(order apprequest.Order) (model.Order, error) {
+	newOrder := model.NewOrder(order.TotalPaid)
 	return o.orderRepo.SubTotalOrder(newOrder)
 }
 

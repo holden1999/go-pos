@@ -1,12 +1,12 @@
 package apprequest
 
-import "go-pos/model"
-
 type Order struct {
-	TotalPrice  int64           `json:"totalPrice"`
-	TotalPaid   int64           `json:"totalPaid"`
-	TotalReturn int64           `json:"totalReturn"`
-	Product     []model.Product `json:"product"`
-	Cashier     model.Cashier   `json:"cashier"`
-	PaymentType model.Payment   `json:"paymentType"`
+	PaymentId uint           `json:"paymentId" binding:"required"`
+	TotalPaid int64          `json:"totalPaid" binding:"required"`
+	Products  []ProductOrder `json:"products" binding:"required"`
+}
+
+type ProductOrder struct {
+	ProductId uint `json:"productId"`
+	Quantity  int  `json:"qty"`
 }

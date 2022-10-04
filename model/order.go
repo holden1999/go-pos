@@ -1,55 +1,62 @@
 package model
 
-import (
-	"time"
+import "time"
 
-	"gorm.io/gorm"
-)
-
-type OrderData struct {
-	List interface{} `json:"orders"`
+type ListOrder struct {
+	List []OrderResp `json:"orders"`
 	Meta `json:"meta"`
 }
 
-type OrderResp struct {
-	OrderId       uint        `gorm:"id"`
-	CashierId     CashierResp `gorm:"embedded,column:id" json:"cashierId"`
-	PaymentTypeId PaymentResp `gorm:"embedded,column:id" json:"paymentTypeId"`
-	TotalPrice    string      `json:"totalPrice"`
-	TotalPaid     string      `json:"totalPaid"`
-	TotalReturn   string      `json:"totalReturn"`
-	ReceiptId     string      `json:"receiptId"`
-	CreatedAt     time.Time   `json:"createdAt"`
-	Cashier       CashierResp `gorm:"embedded" json:"cashier"`
+type DetailOrder struct {
+	Order OrderResp `json:"order"`
 }
 
-type CreateOrder struct {
-	PaymentId uint           `json:"paymentId" binding:"required"`
-	TotalPaid uint           `json:"totalPaid" binding:"required"`
-	Products  []ProductOrder `json:"products" binding:"required"`
+type AddOrder struct {
+	Order    `json:"order"`
+	Products []ProductOrderResp `json:"products"`
 }
 
 type Order struct {
-	gorm.Model
-	totalPrice  int64
-	totalPaid   int64
-	totalReturn int64
-	product     []Product
-	cashier     Cashier
-	paymentType Payment
+	OrderId        uint      `gorm:"primaryKey" json:"orderId"`
+	CashiersId     uint      `json:"cashiersId"`
+	PaymentTypesId uint      `json:"paymentTypesId"`
+	TotalPrice     int64     `json:"totalPrice"`
+	TotalPaid      int64     `json:"totalPaid"`
+	TotalReturn    int64     `json:"totalReturn"`
+	ReceiptId      uint      `json:"receiptId"`
+	UpdatedAt      time.Time `json:"updatedAt"`
+	CreatedAt      time.Time `json:"createdAt"`
+}
+
+type OrderDetail struct {
+	OrderId   uint
+	ProductId uint
+	Quantity  int
+}
+
+type OrderResp struct {
+	OrderId        uint             `json:"orderId"`
+	CashiersId     uint             `json:"cashiersId"`
+	PaymentTypesId uint             `json:"paymentTypesId"`
+	TotalPrice     int64            `json:"totalPrice"`
+	TotalPaid      int64            `json:"totalPaid"`
+	TotalReturn    int64            `json:"totalReturn"`
+	ReceiptId      uint             `json:"receiptId"`
+	CreatedAt      time.Time        `json:"createdAt"`
+	Cashier        CashierResp      `gorm:"embedded" json:"Cashier"`
+	PaymentType    OrderPaymentResp `gorm:"embedded" json:"payment_type"`
+}
+
+func (OrderDetail) TableName() string {
+	return "orders"
 }
 
 func (OrderResp) TableName() string {
 	return "orders"
 }
 
-func NewOrder(totalPrice, totalPaid, totalReturn int64, product []Product, cashier Cashier, payment Payment) Order {
+func NewOrder(totalPaid int64) Order {
 	return Order{
-		totalPrice:  totalPrice,
-		totalPaid:   totalPaid,
-		totalReturn: totalReturn,
-		product:     product,
-		cashier:     cashier,
-		paymentType: payment,
+		TotalPaid: totalPaid,
 	}
 }

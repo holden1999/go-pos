@@ -37,11 +37,6 @@ type NewProductResp struct {
 	CreatedAt  time.Time `json:"createdAt"`
 }
 
-type ProductOrder struct {
-	ProductId uint `json:"productId"`
-	Qty       uint `json:"qty"`
-}
-
 type ProductResp struct {
 	ProductId uint                `json:"productId"`
 	Sku       string              `json:"sku"`
@@ -51,6 +46,16 @@ type ProductResp struct {
 	Image     string              `json:"image"`
 	Category  CategoryProductResp `gorm:"embedded" json:"category"`
 	Discount  DiscountResp        `gorm:"embedded" json:"discount"`
+}
+
+type ProductOrderResp struct {
+	ProductId        uint         `json:"productId"`
+	Name             string       `json:"name"`
+	Price            int          `json:"price"`
+	Discount         DiscountResp `gorm:"embedded" json:"discount"`
+	Qty              int          `json:"qty"`
+	TotalNormalPrice int          `json:"totalNormalPrice"`
+	TotalFinalPrice  int          `json:"totalFinalPrice"`
 }
 
 func (ProductResp) TableName() string {
