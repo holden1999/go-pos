@@ -66,14 +66,14 @@ func (api *PaymentApi) DetailPayment(c *gin.Context) {
 
 func (api *PaymentApi) CreatePayment(c *gin.Context) {
 	var createPayment apprequest.PaymentRequest
-	err := c.ShouldBindJSON(&createPayment)
+	err := c.BindJSON(&createPayment)
 	if err != nil {
-		c.AbortWithStatusJSON(400, err.Error())
+		api.Error(c, 400, err.Error())
 		return
 	}
 	data, err := api.paymentUseCase.CreatePayment(createPayment)
 	if err != nil {
-		c.AbortWithStatusJSON(400, err.Error())
+		api.Error(c, 400, err.Error())
 		return
 	}
 	api.Success(c, "Success", data)

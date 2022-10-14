@@ -3,7 +3,7 @@
     "editor.fontLigatures": true,
     "editor.lineHeight": 1.4,
     "editor.fontWeight": "normal",
-    "workbench.colorTheme": "One Dark Pro",
+    "workbench.colorTheme": "Atom One Light",
     "editor.fontFamily": "JetBrains Mono",
     "workbench.colorCustomizations": {
         "tab.activeBackground": "#282c34",

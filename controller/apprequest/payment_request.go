@@ -1,7 +1,7 @@
 package apprequest
 
 type PaymentRequest struct {
-	Name string `json:"name"`
-	Type string `json:"type"`
+	Name string `json:"name" validation:"required"`
+	Type string `json:"type" validation:"required"`
 	Logo string `json:"logo"`
 }
