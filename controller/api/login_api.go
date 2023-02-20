@@ -16,8 +16,9 @@ type LoginApi struct {
 }
 
 func (api *LoginApi) InitRouter() {
-	api.publicRoute.POST("/:cashierId/login", api.VerifyLogin)
 	api.publicRoute.GET("/:cashierId/passcode", api.Passcode)
+	api.publicRoute.POST("/:cashierId/login", api.VerifyLogin)
+	api.publicRoute.POST("/:cashierId/logout", api.VerifyLogout)
 }
 
 func (api *LoginApi) Passcode(c *gin.Context) {
@@ -47,7 +48,11 @@ func (api *LoginApi) VerifyLogin(c *gin.Context) {
 		return
 	}
 	cashierId := uint(intId)
-	c.BindJSON(&credential)
+	err = c.BindJSON(&credential)
+	if err != nil {
+		api.Error(c, 400, "Error in BindJSON")
+		return
+	}
 	isUserAuthenticated := api.loginUseCase.LoginUser(cashierId, credential.Passcode)
 	if !isUserAuthenticated {
 		api.Error(c, 401, "Passcode Not Match")
@@ -56,6 +61,10 @@ func (api *LoginApi) VerifyLogin(c *gin.Context) {
 	token, _ := api.jwtUseCase.GenerateToken()
 	result.Token = token
 	api.Success(c, "Success", result)
+}
+
+func (api *LoginApi) VerifyLogout(c *gin.Context) {
+
 }
 
 func NewLoginApi(publicRoute *gin.RouterGroup, loginUseCase usecase.LoginUseCase, jwtUseCase usecase.JWTUseCase) {

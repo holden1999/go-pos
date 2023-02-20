@@ -63,15 +63,18 @@ func (api *CashierApi) UpdateCashier(c *gin.Context) {
 	data, err := strconv.Atoi(id)
 	if err != nil {
 		api.Error(c, 404, "ID doesn't exist")
+		return
 	}
 	var updateCashier apprequest.Cashier
 	err = c.BindJSON(&updateCashier)
 	if err != nil {
 		api.Error(c, 400, "Error update cashier")
+		return
 	}
 	err = api.cashierUseCase.UpdateCashier(updateCashier, data)
 	if err != nil {
 		api.Error(c, 404, err.Error())
+		return
 	}
 	api.SuccessNotif(c, "Success")
 }
@@ -81,10 +84,12 @@ func (api *CashierApi) DeleteCashier(c *gin.Context) {
 	data, err := strconv.Atoi(id)
 	if err != nil {
 		api.Error(c, 404, "ID doesn't exist")
+		return
 	}
 	err = api.cashierUseCase.DeleteCashier(data)
 	if err != nil {
 		api.Error(c, 404, err.Error())
+		return
 	}
 	api.SuccessNotif(c, "Success")
 }

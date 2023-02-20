@@ -21,12 +21,18 @@ func (a *AuthTokenMiddleware) RequireToken() gin.HandlerFunc {
 		err := c.BindHeader(&h)
 		if err != nil {
 			a.Error(c, 401, "Login Error")
+			return
 		}
 		tokenString := strings.Replace(h.AuthorizationHeader, "Bearer", "", -1)
 		if tokenString == "" {
 			a.Error(c, 401, "Unauthorized")
+			return
 		}
-		a.accToken.ValidateToken(tokenString)
+		_, err = a.accToken.ValidateToken(tokenString)
+		if err != nil {
+			a.Error(c, 401, err.Error())
+			return
+		}
 	}
 }
 

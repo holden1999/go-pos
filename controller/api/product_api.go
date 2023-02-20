@@ -46,6 +46,7 @@ func (api *ProductApi) DetailProduct(c *gin.Context) {
 	data, err := strconv.Atoi(id)
 	if err != nil {
 		api.Error(c, 400, "ID doesn't exist")
+		return
 	}
 	result := api.productUseCase.DetailProduct(data)
 	api.Success(c, "Success", result)
@@ -53,10 +54,15 @@ func (api *ProductApi) DetailProduct(c *gin.Context) {
 
 func (api *ProductApi) CreateProduct(c *gin.Context) {
 	var newProduct apprequest.ProductRequest
-	c.BindJSON(&newProduct)
+	err := c.BindJSON(&newProduct)
+	if err != nil {
+		api.Error(c, 400, err.Error())
+		return
+	}
 	data, err := api.productUseCase.CreateProduct(newProduct)
 	if err != nil {
 		api.Error(c, 400, "Error Create Product")
+		return
 	}
 	api.Success(c, "Success", data)
 }

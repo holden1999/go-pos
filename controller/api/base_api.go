@@ -31,5 +31,4 @@ func (b *BaseApi) SuccessNotif(c *gin.Context, message string) {
 
 func (b *BaseApi) Error(c *gin.Context, code int, message string) {
 	commonresp.NewJsonResponse(c).SendError(code, commonresp.NewErrorMessage(message))
-	return
 }
