@@ -1,11 +1,12 @@
 package api
 
 import (
-	"github.com/gin-gonic/gin"
 	"go-pos/controller/apprequest"
 	"go-pos/model"
 	"go-pos/usecase"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 type CashierApi struct {
@@ -68,7 +69,7 @@ func (api *CashierApi) UpdateCashier(c *gin.Context) {
 	var updateCashier apprequest.Cashier
 	err = c.BindJSON(&updateCashier)
 	if err != nil {
-		api.Error(c, 400, "Error update cashier")
+		api.Error(c, 400, "Error BindJSON")
 		return
 	}
 	err = api.cashierUseCase.UpdateCashier(updateCashier, data)
